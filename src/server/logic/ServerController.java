@@ -5,5 +5,9 @@ package server.logic;
  */
 
 public class ServerController {
+    private DatabaseConnection dbc;
 
+    public ServerController() {
+        dbc = new DatabaseConnection();
+    }
 }
