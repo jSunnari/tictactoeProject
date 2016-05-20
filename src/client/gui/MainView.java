@@ -20,7 +20,7 @@ public class MainView {
 
         buildApp();
 
-        ImageView selectedImage = new ImageView(new Image(getClass().getResourceAsStream("/res/logo.png")));
+        ImageView selectedImage = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
         mainBorderPane.setTop(selectedImage);
 
 
