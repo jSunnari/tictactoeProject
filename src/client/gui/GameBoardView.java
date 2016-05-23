@@ -1,5 +1,10 @@
 package client.gui;
 
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -19,8 +24,8 @@ import java.util.Scanner;
  */
 public class GameBoardView implements Runnable {
 //Connection to the server
-    private String ip = "localhost";
-    private int port = 22222;
+    private String ip;
+    private int port;
     private Scanner scanner = new Scanner(System.in);
     private JFrame frame;
     private final int WIDTH = 506;
@@ -37,9 +42,7 @@ public class GameBoardView implements Runnable {
     private BufferedImage board;
     private BufferedImage whiteX;
     private BufferedImage whiteCircle;
-
     private String[] spaces = new String[9];
-
     private boolean yourTurn = false;
     private boolean circle = true;
     private boolean accepted = false;
@@ -50,7 +53,6 @@ public class GameBoardView implements Runnable {
     private boolean tie = false;
 //The rectangle spaces in the board
     private int lengthOfSpace = 160;
-    private int errors = 0;
 //Line that writes is there is three in a row
     private int firstSpot = -1;
     private int secondSpot = -1;
@@ -64,7 +66,26 @@ public class GameBoardView implements Runnable {
     private String wonString = "You are the champ";
     private String enemyWonString = "You suck! ";
     private String tieString = "It's a tie";
-
+    private String p1Name = "Adam";
+    private String p2Name = "Steve";
+    private String tieName = "Ties";
+    private String p1Score = "0";
+    private String p2Score = "0";
+    private String tieScore = "0";
+//Components for scoreboard
+    private Label p1NameLbl = new Label(p1Name);
+    private Label p2NameLbl = new Label(p2Name);
+    private Label tieNameLbl = new Label(tieName);
+    private Label p1ScoreLbl = new Label(p1Score);
+    private Label p2ScoreLbl = new Label(p2Score);
+    private Label tieScoreLbl = new Label(tieScore);
+//Layout boxes for the scoreboard
+    private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
+    private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl);
+    private VBox tieVbox = new VBox(tieNameLbl, tieScoreLbl);
+    private HBox scoreBoardHbox = new HBox(p1Vbox, p2Vbox, tieVbox);
+//The root of roots
+    private BorderPane root = new BorderPane();
     private int[][] wins = new int[][]{
     //Possible setups of tiles to win the game, horizontal, vertical, diagonal
             {0, 1, 2} ,{3, 4, 5} ,{6, 7, 8},
@@ -100,7 +121,6 @@ public class GameBoardView implements Runnable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setVisible(true);
-
         thread = new Thread(this, "TicTacToe");
         thread.start();
     }
@@ -125,7 +145,7 @@ public class GameBoardView implements Runnable {
             g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 //Method that checks if the passed in string is in the font that we are using
             int stringWidth = g2.getFontMetrics().stringWidth(unableToCommunWithOpponentStr);
-            g.drawString(unableToCommunWithOpponentStr, WIDTH/2 - stringWidth /2, HEIGHT / 2);
+            g.drawString(unableToCommunWithOpponentStr, WIDTH / 2 - stringWidth / 2, HEIGHT / 2);
             return;
         }
 
@@ -201,7 +221,7 @@ public class GameBoardView implements Runnable {
                 yourTurn = true;
             }catch(IOException e){
              e.printStackTrace();
-                errors++;
+//                errors++;
             }
         }
     }
@@ -258,7 +278,6 @@ public class GameBoardView implements Runnable {
             try{
                 socket = serverSocket.accept();
                 dos = new DataOutputStream(socket.getOutputStream());
-
                 dis = new DataInputStream(socket.getInputStream());
                 accepted = true;
                 System.out.println("CLIENT HAS REQUESTED TO JOIN, AND WE HAVE ACCEPTED");
@@ -308,7 +327,6 @@ public class GameBoardView implements Runnable {
     }
 //TODO Change to VBOX JPanel just for testing
    private class Painter extends JPanel implements MouseListener {
-    //I HAVE NO IDEA WHY!!
 
         public Painter(){
             setFocusable(true);
@@ -349,7 +367,7 @@ public class GameBoardView implements Runnable {
                             dos.writeInt(position);
                             dos.flush();
                         }catch (IOException el){
-                            errors++;
+//                            errors++;
                             el.printStackTrace();
                         }
                         System.out.println("DATA WAS SENT");
