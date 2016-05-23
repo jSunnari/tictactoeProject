@@ -1,15 +1,11 @@
 package client.gui;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-import javafx.scene.layout.VBox;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -142,8 +138,15 @@ public class GameBoardView implements Runnable {
                         if (circle) {
                             //If circle is true, paint the circle, LengthOfSpace = the rectangle image will be painted inside, +10 is the width of the border
                             g.drawImage(whiteX, (i % 3) * lengthOfSpace + 10 * (i % 3), (int) (i / 3) * lengthOfSpace + 10 * (int) (i / 3), null);
-                        } else if (spaces[i].equals("O")) {
+                        } else {
+                            g.drawImage(whiteX, (i % 3) * lengthOfSpace + 10 * (i % 3), (int) (i / 3) * lengthOfSpace + 10 * (int) (i / 3), null);
+                        }
+                    }else if (spaces[i].equals("O")) {
+                        if(circle) {
                             g.drawImage(whiteCircle, (i % 3) * lengthOfSpace + 10 * (i % 3), (int) (i / 3) * lengthOfSpace + 10 * (int) (i / 3), null);
+                        } else {
+                            g.drawImage(whiteCircle, (i % 3) * lengthOfSpace + 10 * (i % 3), (int) (i / 3) * lengthOfSpace + 10 * (int) (i / 3), null);
+
                         }
                     }
                 }
@@ -185,8 +188,8 @@ public class GameBoardView implements Runnable {
         }
     }
     private void tick(){
-        if(errors >= 10) unableToCommunicateWithOpponent = true;
-        if(!yourTurn && !unableToCommunicateWithOpponent){
+//        if(errors >= 10) unableToCommunicateWithOpponent = true;
+        if(!yourTurn){
             try{
                 int space = dis.readInt();
                 if(circle) spaces[space] = "X";
@@ -196,6 +199,7 @@ public class GameBoardView implements Runnable {
                 yourTurn = true;
             }catch(IOException e){
              e.printStackTrace();
+                errors++;
             }
         }
     }
@@ -209,7 +213,7 @@ public class GameBoardView implements Runnable {
                         won = true;
                     }
                 } else {
-                    if (spaces[wins[i][0]].equals("X") && spaces[wins[i][1]].equals("X") && spaces[wins[i][2]].equals("X")) {
+                    if (spaces[wins[i][0]] == "X" && spaces[wins[i][1]] == "X" && spaces[wins[i][2]] == "X") {
                         firstSpot = wins[i][0];
                         secondSpot = wins[i][2];
                         won = true;
@@ -221,7 +225,7 @@ public class GameBoardView implements Runnable {
         for(int i = 0; i < wins.length; i++){
             if(spaces[i] != null) {
                 if (circle) {
-                    if (spaces[wins[i][0]].equals("X") && spaces[wins[i][1]].equals("X") && spaces[wins[i][2]].equals("X")) {
+                    if (spaces[wins[i][0]] == "X" && spaces[wins[i][1]] == "X" && spaces[wins[i][2]] == "X") {
                         firstSpot = wins[i][0];
                         secondSpot = wins[i][2];
                         enemyWon = true;
@@ -250,6 +254,7 @@ public class GameBoardView implements Runnable {
             try{
                 socket = serverSocket.accept();
                 dos = new DataOutputStream(socket.getOutputStream());
+
                 dis = new DataInputStream(socket.getInputStream());
                 accepted = true;
                 System.out.println("CLIENT HAS REQUESTED TO JOIN, AND WE HAVE ACCEPTED");
@@ -261,6 +266,7 @@ public class GameBoardView implements Runnable {
         try{
             socket = new Socket(ip, port);
             dos = new DataOutputStream(socket.getOutputStream());
+            System.out.println("Mellan dos och dis");
             dis = new DataInputStream(socket.getInputStream());
             accepted = true;
         }catch (IOException e){
@@ -277,16 +283,16 @@ public class GameBoardView implements Runnable {
         }catch(IOException e){
             e.printStackTrace();
         }
-        yourTurn = false;
+        yourTurn = true;
         circle = false;
     }
 
     //Create a method that loads our gameGraphics
     public void loadImages(){
         try{
-            board = ImageIO.read(getClass().getResourceAsStream("/res/boardWhiteLines.png"));
-            whiteX = ImageIO.read(getClass().getResourceAsStream("../res/crossWhite.png"));
-            whiteCircle = ImageIO.read(getClass().getResourceAsStream("../res/circleWhite.png"));
+            board = ImageIO.read(getClass().getResourceAsStream("/boardWhiteLines.png"));
+            whiteX = ImageIO.read(getClass().getResourceAsStream("/crossWhite.png"));
+            whiteCircle = ImageIO.read(getClass().getResourceAsStream("/circleWhite.png"));
         } catch(IOException e){
             e.printStackTrace();
         }
@@ -299,7 +305,6 @@ public class GameBoardView implements Runnable {
 //TODO Change to VBOX JPanel just for testing
    private class Painter extends JPanel implements MouseListener {
     //I HAVE NO IDEA WHY!!
-        private static final long serialVersionUID = 1;
 
         public Painter(){
             setFocusable(true);
@@ -317,13 +322,17 @@ public class GameBoardView implements Runnable {
 
        @Override
        public void mouseClicked(MouseEvent e) {
+           System.out.println("inside mouseclicked event");
             if(accepted){
+                System.out.println("method accepted mouseclicked");
                 if(yourTurn && !unableToCommunicateWithOpponent && !won && !enemyWon){
+                    System.out.println("MouseClickec under yourturn");
                     int x = e.getX() / lengthOfSpace;
                     int y = e.getY() / lengthOfSpace;
                     y *= 3;
                     int position = x + y;
-                    if(!spaces[position].equals("X") && !spaces[position].equals("O")){
+
+                    if(spaces[position] == null){
                         if(!circle) spaces[position] = "X";
                         else spaces[position] = "O";
                         yourTurn = false;
