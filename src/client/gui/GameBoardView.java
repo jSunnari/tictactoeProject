@@ -173,7 +173,7 @@ public class GameBoardView implements Runnable {
             }
             if(tie){
                 Graphics2D g2 = (Graphics2D) g;
-                g.setColor(Color.BLACK);
+                g.setColor(Color.RED);
                 g.setFont(largerFont);
                 int stringWidth = g2.getFontMetrics().stringWidth(tieString);
                 g.drawString(tieString, WIDTH / 2 - stringWidth / 2, HEIGHT / 2);
@@ -197,6 +197,7 @@ public class GameBoardView implements Runnable {
                 else spaces[space] = "O";
                 checkForEnemyWin();
                 checkForTie();
+
                 yourTurn = true;
             }catch(IOException e){
              e.printStackTrace();
@@ -243,12 +244,14 @@ public class GameBoardView implements Runnable {
     }
     private void checkForTie(){
         //Check if every square is filled, then it's a tie
-        for(int i = 0; i <spaces.length; i++){
-            if(spaces[i] == null){
-                return;
-            }
-        }
-        tie = true;
+      if(!won && !enemyWon) {
+          for (int i = 0; i < spaces.length; i++) {
+              if (spaces[i] == null) {
+                  return;
+              }
+          }
+          tie = true;
+      }
     }
     private void listenForServerRequest(){
         Socket socket = null;
@@ -271,7 +274,7 @@ public class GameBoardView implements Runnable {
             dis = new DataInputStream(socket.getInputStream());
             accepted = true;
         }catch (IOException e){
-            System.out.println("Unable to connect to the address");
+            System.out.println("Unable to connect to the address: Starting a server");
             return false;
         }
         System.out.println("Succesfully connected to server");
@@ -323,6 +326,11 @@ public class GameBoardView implements Runnable {
 
        @Override
        public void mouseClicked(MouseEvent e) {
+        if(enemyWon || won){
+            for(int i = 0; i <spaces.length; i++){
+                spaces[i] = null;
+            }
+        }
             if(accepted){
                 if(yourTurn && !unableToCommunicateWithOpponent && !won && !enemyWon){
                     int x = e.getX() / lengthOfSpace;
