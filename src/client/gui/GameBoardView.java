@@ -157,7 +157,8 @@ public class GameBoardView implements Runnable {
              //Setting the line through the lookALike objects
                 g2.setStroke(new BasicStroke(10));
                 g.setColor(Color.black);
-                g.drawLine(firstSpot % 3 * lengthOfSpace + 10 * firstSpot % 3 + lengthOfSpace / 2, (int) (firstSpot / 3) * lengthOfSpace + 10 * (int)(firstSpot / 3) + lengthOfSpace / 2, secondSpot % 3 * lengthOfSpace + 10 * secondSpot % 3 + lengthOfSpace / 2, (int) (secondSpot / 3) * lengthOfSpace + 10 * (int) (secondSpot / 3) + lengthOfSpace / 2);
+                g.drawLine(firstSpot % 3 * lengthOfSpace + 10 * firstSpot % 3 + lengthOfSpace / 2, (int) (firstSpot / 3) * lengthOfSpace + 10 * (int)(firstSpot / 3) + lengthOfSpace / 2,
+                        secondSpot % 3 * lengthOfSpace + 10 * secondSpot % 3 + lengthOfSpace / 2, (int) (secondSpot / 3) * lengthOfSpace + 10 * (int) (secondSpot / 3) + lengthOfSpace / 2);
 
                 g.setColor(Color.RED);
                 g.setFont(largerFont);
@@ -322,11 +323,8 @@ public class GameBoardView implements Runnable {
 
        @Override
        public void mouseClicked(MouseEvent e) {
-           System.out.println("inside mouseclicked event");
             if(accepted){
-                System.out.println("method accepted mouseclicked");
                 if(yourTurn && !unableToCommunicateWithOpponent && !won && !enemyWon){
-                    System.out.println("MouseClickec under yourturn");
                     int x = e.getX() / lengthOfSpace;
                     int y = e.getY() / lengthOfSpace;
                     y *= 3;
