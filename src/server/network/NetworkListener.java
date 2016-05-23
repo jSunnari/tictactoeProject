@@ -33,7 +33,7 @@ public class NetworkListener implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Starting server and waiting for clients...");
+        System.out.println("Starting server on port " + port + " and waiting for clients...");
 
         while(connected){
             try {
@@ -41,12 +41,10 @@ public class NetworkListener implements Runnable {
                 socket = new Socket();
                 socket = serverSocket.accept();
 
-                System.out.println("Ip: " + socket.getInetAddress());
-                System.out.println("Port: " + port);
+                System.out.println("A client has connected!");
 
                 Thread clientThread = new Thread(new NetworkCommunication(socket));
                 clientThread.start();
-
             }
 
             catch (IOException | InterruptedException e) {

@@ -1,24 +1,40 @@
 package client.beans;
 
+import java.io.Serializable;
+
 /**
  * Created by Jonas on 2016-05-19.
  */
 
-public class User {
+public class User implements Serializable {
 
     private int id;
     private String username;
     private String password;
     private String email;
+    private boolean login;
     private int wonMatches;
     private int tieMatches;
     private int lostMatches;
     private int rank;
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public boolean isLogin() {
+        return login;
+    }
+
+    public void setLogin(boolean login) {
+        this.login = login;
     }
 
     public int getId() {
