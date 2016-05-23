@@ -22,7 +22,7 @@ import java.util.Scanner;
 /**
  * Created by robin on 2016-05-20.
  */
-public class GameBoardView implements Runnable {
+public class GameBoardView extends VBox implements Runnable {
 //Connection to the server
     private String ip;
     private int port;
@@ -85,7 +85,7 @@ public class GameBoardView implements Runnable {
     private VBox tieVbox = new VBox(tieNameLbl, tieScoreLbl);
     private HBox scoreBoardHbox = new HBox(p1Vbox, p2Vbox, tieVbox);
 //The root of roots
-    private BorderPane root = new BorderPane();
+
     private int[][] wins = new int[][]{
     //Possible setups of tiles to win the game, horizontal, vertical, diagonal
             {0, 1, 2} ,{3, 4, 5} ,{6, 7, 8},
@@ -217,7 +217,6 @@ public class GameBoardView implements Runnable {
                 else spaces[space] = "O";
                 checkForEnemyWin();
                 checkForTie();
-
                 yourTurn = true;
             }catch(IOException e){
              e.printStackTrace();
@@ -323,8 +322,9 @@ public class GameBoardView implements Runnable {
 
     public static void main(String[] args){
         GameBoardView gameBoard = new GameBoardView();
-
     }
+
+
 //TODO Change to VBOX JPanel just for testing
    private class Painter extends JPanel implements MouseListener {
 
