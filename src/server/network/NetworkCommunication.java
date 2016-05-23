@@ -59,7 +59,6 @@ public class NetworkCommunication implements Runnable{
             }
 
 
-
             if (!incommingMessage.isEmpty() && incommingMessage != null) {
 
                 if (incommingMessage.containsKey("createUser")) {
