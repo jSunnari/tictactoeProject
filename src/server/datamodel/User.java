@@ -1,12 +1,21 @@
 package server.datamodel;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by Jonas on 2016-05-19.
  */
 
 @Entity
+@NamedQueries({
+        @NamedQuery(
+                name = "getUser",
+                query = "select c FROM User c WHERE c.username = :userName"),
+        @NamedQuery(
+                name = "getAllStudents",
+                query = "SELECT c FROM User c"),
+})
 public class User {
 
     @Id

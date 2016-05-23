@@ -1,5 +1,10 @@
 package client.network;
 
+/**
+ * Network communication for client,
+ * Handles the communication between server and client.
+ */
+
 import client.beans.User;
 
 import java.io.*;
@@ -14,20 +19,17 @@ import java.util.Map;
 public class NetworkCommunication implements Runnable {
     private InputStream inputStream;
     private ObjectInputStream objectInputStream;
-    private OutputStream outputStream;
     private ObjectOutputStream objectOutputStream;
     private Map incommingMessage;
     private Socket socket;
 
-
-    private boolean connected;
-
+    /**
+     * @param socket = reference to the socket, used for creating streams.
+     */
     public NetworkCommunication(Socket socket) {
         this.socket = socket;
         try {
-            outputStream = socket.getOutputStream();
-            objectOutputStream = new ObjectOutputStream(outputStream);
-            System.out.println("objectoutputstream = " + objectOutputStream);
+            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,7 +57,6 @@ public class NetworkCommunication implements Runnable {
 
         try {
             objectOutputStream.writeObject(createUser);
-            //objectOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,6 +73,11 @@ public class NetworkCommunication implements Runnable {
     }
 
 
+    /**
+     * Disconnect-method,
+     * Sends a 0 to the server as a command for exit.
+     * Closes the stream there after.
+     */
     public void disconnect() {
         try {
             objectOutputStream.write(0);

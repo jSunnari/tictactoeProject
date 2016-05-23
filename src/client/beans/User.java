@@ -12,7 +12,6 @@ public class User implements Serializable {
     private String username;
     private String password;
     private String email;
-    private boolean login;
     private int wonMatches;
     private int tieMatches;
     private int lostMatches;
@@ -27,14 +26,6 @@ public class User implements Serializable {
         this.username = username;
         this.password = password;
         this.email = email;
-    }
-
-    public boolean isLogin() {
-        return login;
-    }
-
-    public void setLogin(boolean login) {
-        this.login = login;
     }
 
     public int getId() {

@@ -73,12 +73,7 @@ public class ClientController{
             User login = new User(username, password);
             currUser = networkCommunication.login(login);
 
-            if (currUser.isLogin()){
-                System.out.println("Inloggad"); //TEST
-            }
-            else {
-                System.out.println("inte inloggad"); //TEST
-            }
+
         }
         else {
             loginView.setErrorLabel("Fyll i alla fält.");
