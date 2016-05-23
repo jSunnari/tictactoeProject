@@ -1,0 +1,7 @@
+login               sends user                returns boolean
+
+getUser             sends nothing             returns user
+
+updateUser          sends user                returns nothing
+
+getHighscores       sends nothing             returns list of users sorted with highest score first
