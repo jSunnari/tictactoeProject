@@ -39,18 +39,22 @@ public class NetworkListener implements Runnable {
     public void run() {
         System.out.println("Starting server on port " + port + " and waiting for clients...");
 
+        /**
+         * Listens for new clients:
+         */
         while(connected){
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
                 socket = new Socket();
                 socket = serverSocket.accept();
 
+                //When a client has connected:
                 System.out.println("A client has connected!");
 
+                //Creates an object of the NetworkCommunication and starts a new thread:
                 Thread clientThread = new Thread(new NetworkCommunication(socket, serverController));
                 clientThread.start();
             }
-
             catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }

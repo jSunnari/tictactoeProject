@@ -13,6 +13,10 @@ public class ServerController {
         dbc = new DatabaseConnection();
     }
 
+    public User getUser(String username){
+        return dbc.getUser(username);
+    }
+
     public void createUser(User user){
         dbc.createUser(user);
     }

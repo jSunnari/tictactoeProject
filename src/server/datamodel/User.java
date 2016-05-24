@@ -1,7 +1,6 @@
 package server.datamodel;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by Jonas on 2016-05-19.
@@ -26,6 +25,7 @@ public class User {
     private String password;
     @Column(unique = true)
     private String email;
+    private boolean login;
     private int wonMatches;
     private int tieMatches;
     private int lostMatches;
@@ -40,6 +40,14 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public boolean isLogin() {
+        return login;
+    }
+
+    public void setLogin(boolean login) {
+        this.login = login;
     }
 
     public int getId() {
