@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,9 +18,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -29,10 +28,10 @@ public class GameBoardJavafxView extends Application {
     private boolean playable = true;
     private boolean turnX = true;
 //Boardgame dimensions
-    private int HEIGHT = 600;
-    private int WIDTH = 600;
-    private int tileWidth = 200;
-    private int tileHeight = 200;
+    private int HEIGHT = 540;
+    private int WIDTH = 540;
+    private int tileWidth = 180;
+    private int tileHeight = 180;
 //Boardmatrix for containing our tiles
     private Tile[][] board = new Tile[3][3];
     //List for possible win combinations
@@ -42,6 +41,7 @@ public class GameBoardJavafxView extends Application {
     private FadeTransition fadeTransition;
     private FadeTransition fadeTransition2;
     private FadeTransition fadeTransition3;
+    private Pane gameBoard = new Pane();
     private Pane root = new Pane();
     private String p1Name = "Adam";
     private String p2Name = "Steve";
@@ -57,26 +57,29 @@ public class GameBoardJavafxView extends Application {
     private Label p2ScoreLbl = new Label(p2Score);
     private Label tieScoreLbl = new Label(tieScore);
 //Layout boxes for the scoreboard
+    private Button resetBut = new Button("PLAY AGAIN!!");
     private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
     private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl);
     private VBox tieVbox = new VBox(tieNameLbl, tieScoreLbl);
-    private HBox scoreBoardHbox = new HBox(p1Vbox, p2Vbox, tieVbox);
+    private HBox scoreBoardHbox = new HBox(p1Vbox, tieVbox, p2Vbox, resetBut);
+    private VBox gameVBox = new VBox();
+
+
+
 
     private Parent createContent() {
 //Setting a windowsize for our tictactoeGame
-        root.setPrefSize(WIDTH, HEIGHT);
-
+        gameBoard.setPrefSize(WIDTH, HEIGHT);
 //A loop within a loop to add our tiles to the board matrix
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 Tile tile = new Tile();
                 tile.setTranslateX(j * tileWidth);
                 tile.setTranslateY(i * tileHeight);
-                root.getChildren().add(tile);
+                gameBoard.getChildren().add(tile);
                 board[j][i] = tile;
             }
         }
-
         // horizontal
         /*
         *{0, 1, 2}
@@ -100,21 +103,41 @@ public class GameBoardJavafxView extends Application {
         combos.add(new Combo(board[0][0], board[1][1], board[2][2]));
         combos.add(new Combo(board[2][0], board[1][1], board[0][2]));
 
-        return root;
+        return gameBoard;
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setScene(new Scene(createContent()));
+        resetBut.setOnAction(event ->{
+            playable = true;
+            resetBoard();
+        });
+        gameVBox.getChildren().addAll(createContent(), scoreBoardHbox);
+        root.getChildren().add(gameVBox);
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
-    private void checkState() {
+    private void checkTiles() {
         for (Combo combo : combos) {
             if (combo.isComplete()) {
                 playable = false;
                 playWinAnimation(combo);
                 break;
+            }
+        }
+    }
+
+    private void resetBoard(){
+        for (Combo combo : combos){
+            if(combo.isComplete()){
+                //Looping through our tiles in the board and reset our images and texts
+                    for(int i = 0; i < 3; i++ ){
+                        for(int j = 0; j < 3; j++){
+                            board[j][i].imgView.setImage(null);
+                            board[j][i].text.setText(null);
+                        }
+                    }
             }
         }
     }
@@ -146,7 +169,18 @@ public class GameBoardJavafxView extends Application {
                 .cycleCount(4)
                 .autoReverse(true)
                 .build();
-
+        if(!turnX){
+            System.out.println("SCOOOOOOOOOOREE!!!");
+            int p1CurrScore = Integer.parseInt(p1ScoreLbl.getText());
+                p1CurrScore = p1CurrScore + 1;
+            p1ScoreLbl.setText(Integer.toString(p1CurrScore));
+        }
+        else if(turnX){
+            System.out.println("SCOOOOOOOOOOREENNNNNNRRRR222222!!!");
+            int p2CurrScore = Integer.parseInt(p2ScoreLbl.getText());
+                p2CurrScore = p2CurrScore + 1;
+            p2ScoreLbl.setText(Integer.toString(p2CurrScore));
+        }
         fadeTransition.play();
         fadeTransition2.play();
         fadeTransition3.play();
@@ -184,7 +218,7 @@ public class GameBoardJavafxView extends Application {
 //A mouseEvent inside our tileClass in order to listen which tile is pressed on
             setOnMouseClicked(event -> {
                 if (!playable){
-
+                    return;
                 }
 
                 if (event.getButton() == MouseButton.PRIMARY) {
@@ -193,7 +227,7 @@ public class GameBoardJavafxView extends Application {
 
                     drawX();
                     turnX = false;
-                    checkState();
+                    checkTiles();
                 }
                 else if (event.getButton() == MouseButton.SECONDARY) {
                     if (turnX)
@@ -201,7 +235,7 @@ public class GameBoardJavafxView extends Application {
 
                     drawO();
                     turnX = true;
-                    checkState();
+                    checkTiles();
                 }
             });
         }
@@ -210,10 +244,6 @@ public class GameBoardJavafxView extends Application {
             return text.getText();
         }
 
-        private void resetBoard(){
-            imgView.setImage(null);
-            text.setText(null);
-        }
 
         private void drawX() {
             imgView.setImage(crossImg);
@@ -225,7 +255,6 @@ public class GameBoardJavafxView extends Application {
             text.setText("O");
         }
     }
-
     public static void main(String[] args) {
         launch(args);
     }
