@@ -27,7 +27,7 @@ public class ClientApp extends Application{
         MainView mainView = new MainView(primaryStage, loginView);
         ClientController clientController = new ClientController(mainView, loginView);
 
-        primaryStage.setOnCloseRequest(event -> clientController.disconnect());
+        primaryStage.setOnCloseRequest(event -> clientController.disconnect(true));
 
     }
 

@@ -81,19 +81,25 @@ public class NetworkCommunication implements Runnable {
         switch (currMessage.getCommand()) {
             case "login":
                 User loginUser = gson.fromJson(cmdData.get(0), User.class);
-
                 clientController.setCurrentUser(loginUser);
-
                 break;
 
             case "userExists":
-                clientController.createAccountResponse(true);
+                clientController.createAccountResponse("error", "Username already exists.");
                 break;
 
             case "userCreated":
-                clientController.createAccountResponse(false);
+                clientController.createAccountResponse("created", "User has been created!");
                 break;
 
+            case "startGame":
+                User opponentUser = gson.fromJson(cmdData.get(0), User.class);
+                clientController.opponentConnected(opponentUser);
+                break;
+
+            case "gameDrawX":
+                clientController.test("vi har kontakt");
+                break;
 
         }
 
@@ -114,12 +120,23 @@ public class NetworkCommunication implements Runnable {
 
     /**
      * Disconnect-method,
-     * Sends a message to the server as a command for exit.
-     * Closes the stream there after.
+     * Sends a message to the server as a command for disconnect.
+     * Closes the stream there after and if exit-boolean is true, the application closes too.
      */
-    public void disconnect() {
+    public void disconnect(boolean exit) {
         output.println("disconnect");
+        output.flush();
         output.close();
+
+        try {
+            socket.close();
+            clientController.setConnectedToServer(false);
+            if (exit) {
+                System.exit(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -6,6 +6,7 @@ package server.network;
  */
 
 import com.google.gson.Gson;
+import server.beans.ConnectPlayers;
 import server.beans.Message;
 import server.datamodel.User;
 import server.logic.ServerController;
@@ -25,17 +26,23 @@ public class NetworkCommunication implements Runnable{
     private Socket socket;
     private boolean clientConnected;
     private Scanner input;
+    private User currUser;
     private PrintWriter output;
     private ServerController serverController;
+    private NetworkListener networkListener;
     private Gson gson;
+    private ConnectPlayers connectPlayers;
+    private GameCommunication gameCommunication;
 
     /**
      * Constructor sets boolean clientConnected to true.
      * @param socket = reference to socket, used for creating streams.
      */
-    public NetworkCommunication(Socket socket, ServerController serverController) {
+    public NetworkCommunication(Socket socket, NetworkListener networkListener, ServerController serverController, GameCommunication gameCommunication) {
         this.socket = socket;
+        this.networkListener = networkListener;
         this.serverController = serverController;
+        this.gameCommunication = gameCommunication;
         gson = new Gson();
         clientConnected = true;
 
@@ -66,7 +73,7 @@ public class NetworkCommunication implements Runnable{
 
                     //If it is a disconnect-message, disconnect:
                     if (incommingMessage.equals("disconnect")){
-                        System.out.println("disconnecting client..");
+                        System.out.println("disconnecting client " + socket.getInetAddress());
                         disconnect();
                         break;
                     }
@@ -98,18 +105,24 @@ public class NetworkCommunication implements Runnable{
         switch (currMessage.getCommand()) {
 
             case "login":
+                //Get the userobject from the client containing only a username and password,
                 User loginAttempt = gson.fromJson(cmdData.get(0), User.class);
+
+                //Get the userobject from the database with the same username,
                 User userReference = serverController.getUser(loginAttempt.getUsername());
 
-                if (userReference == null){
-                    loginAttempt.setLogin(false);
-                }
-                else if (loginAttempt.getPassword().equals(userReference.getPassword())){
-                    loginAttempt.setLogin(true);
+                //If the user exists, and if the password matches,
+                //Set the login-boolean to true and send the user-object from the database:
+                if (userReference != null && loginAttempt.getPassword().equals(userReference.getPassword())){
+                    userReference.setLogin(true);
+                    send("login", userReference);
+                    currUser = userReference;
                 }
 
-                send("login", loginAttempt);
-
+                //Else, send the same userobject which already has the login-boolean to false:
+                else {
+                    send("login", loginAttempt);
+                }
                 break;
 
             case "createUser":
@@ -123,6 +136,33 @@ public class NetworkCommunication implements Runnable{
                     send("userExists", " ");
                 }
                 break;
+
+            case "updateUser":
+                User updateUser = gson.fromJson(cmdData.get(0), User.class);
+
+                serverController.updateUser(updateUser);
+                break;
+
+            case "startGame":
+                //Create a "ConnectPlayers"-object with current user:
+                connectPlayers = new ConnectPlayers(currUser, this);
+                //Send to networklistener:
+                gameCommunication.connectPlayers(connectPlayers);
+                break;
+
+            case "stopGame":
+                gameCommunication.removePlayer(currUser);
+
+
+            case "gameDrawX":
+                User opponent = gson.fromJson(cmdData.get(0), User.class);
+                gameCommunication.updateClient(opponent, "gameDrawX");
+                send("gameDrawX", "");
+
+                break;
+
+
+
         }
     }
 
@@ -138,12 +178,17 @@ public class NetworkCommunication implements Runnable{
         output.println(jsonData);
     }
 
+    public Socket getSocket(){
+        return socket;
+    }
+
     /**
      * Disconnect-method,
      * Sets boolean clientConnected to false and closes both streams and socket.
      */
     void disconnect(){
         clientConnected = false;
+        gameCommunication.removePlayer(currUser);
         try {
             input.close();
             output.close();

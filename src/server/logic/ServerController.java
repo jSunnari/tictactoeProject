@@ -21,5 +21,9 @@ public class ServerController {
         dbc.createUser(user);
     }
 
+    public void updateUser(User user){
+        dbc.updateUser(user);
+    }
+
 
 }

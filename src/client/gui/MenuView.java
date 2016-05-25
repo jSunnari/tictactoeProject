@@ -14,7 +14,7 @@ public class MenuView extends VBox{
     private VBox vBox;
     private Label play = new Label("Play");
     private Label results = new Label("Results");
-    private Label settings = new Label("Settings");
+    private Label settings = new Label("Account settings");
     private Label logout = new Label("Log out");
 
     public MenuView() {
@@ -32,6 +32,10 @@ public class MenuView extends VBox{
 
     public void playMenuListener (EventHandler<MouseEvent> listener){
         play.setOnMouseClicked(listener);
+    }
+
+    public void settingsMenuListener (EventHandler<MouseEvent> listener){
+        settings.setOnMouseClicked(listener);
     }
 
     public void logoutMenuListener (EventHandler<MouseEvent> listener){
