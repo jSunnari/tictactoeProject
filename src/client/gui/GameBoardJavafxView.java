@@ -27,11 +27,13 @@ public class GameBoardJavafxView extends Application {
 
     private boolean playable = true;
     private boolean turnX = true;
+    private boolean gameTie = false;
 //Boardgame dimensions
     private int HEIGHT = 540;
     private int WIDTH = 540;
     private int tileWidth = 180;
     private int tileHeight = 180;
+    private int tieCounter = 0;
 //Boardmatrix for containing our tiles
     private Tile[][] board = new Tile[3][3];
     //List for possible win combinations
@@ -39,12 +41,10 @@ public class GameBoardJavafxView extends Application {
     private Image crossImg = new Image("../res/crossWhite.png");
     private Image circleImg = new Image("../res/circleWhite.png");
     private FadeTransition fadeTransition;
-    private FadeTransition fadeTransition2;
-    private FadeTransition fadeTransition3;
     private Pane gameBoard = new Pane();
     private Pane root = new Pane();
-    private String p1Name = "Adam";
-    private String p2Name = "Steve";
+    private String p1Name = "X";
+    private String p2Name = "O";
     private String tieName = "Ties";
     private String p1Score = "0";
     private String p2Score = "0";
@@ -64,7 +64,11 @@ public class GameBoardJavafxView extends Application {
     private HBox scoreBoardHbox = new HBox(p1Vbox, tieVbox, p2Vbox, resetBut);
     private VBox gameVBox = new VBox();
 
-
+    public GameBoardJavafxView(){
+        p1Vbox.getStyleClass().add("playerScoreVBoxes");
+        p2Vbox.getStyleClass().add("playerScoreVBoxes");
+        tieVbox.getStyleClass().add("playerScoreVBoxes");
+    }
 
 
     private Parent createContent() {
@@ -98,7 +102,6 @@ public class GameBoardJavafxView extends Application {
         for (int x = 0; x < 3; x++) {
             combos.add(new Combo(board[x][0], board[x][1], board[x][2]));
         }
-
         // diagonals
         combos.add(new Combo(board[0][0], board[1][1], board[2][2]));
         combos.add(new Combo(board[2][0], board[1][1], board[0][2]));
@@ -108,13 +111,18 @@ public class GameBoardJavafxView extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        resetBut.setOnAction(event ->{
-            playable = true;
-            resetBoard();
-        });
         gameVBox.getChildren().addAll(createContent(), scoreBoardHbox);
         root.getChildren().add(gameVBox);
-        primaryStage.setScene(new Scene(root));
+        resetBut.setOnAction(event ->{
+            playable = true;
+            checkForTie();
+            resetBoard();
+        });
+        Scene scene = new Scene(root, 1024, 768);
+        scene.getStylesheets().add("../res/style.css"); //check the file style.css in /res.
+        scene.getStylesheets().add("https://fonts.googleapis.com/css?family=VT323");
+        scene.getStylesheets().add("https://fonts.googleapis.com/css?family=Press+Start+2P");
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
@@ -123,21 +131,18 @@ public class GameBoardJavafxView extends Application {
             if (combo.isComplete()) {
                 playable = false;
                 playWinAnimation(combo);
+                checkForTie();
                 break;
             }
         }
     }
 
     private void resetBoard(){
-        for (Combo combo : combos){
-            if(combo.isComplete()){
-                //Looping through our tiles in the board and reset our images and texts
-                    for(int i = 0; i < 3; i++ ){
-                        for(int j = 0; j < 3; j++){
-                            board[j][i].imgView.setImage(null);
-                            board[j][i].text.setText(null);
-                        }
-                    }
+        //Looping through our tiles in the board and reset our images and texts
+        for(int i = 0; i < 3; i++ ){
+            for(int j = 0; j < 3; j++){
+                board[j][i].imgView.setImage(null);
+                board[j][i].text.setText(null);
             }
         }
     }
@@ -145,45 +150,25 @@ public class GameBoardJavafxView extends Application {
     private void playWinAnimation(Combo combo) {
 
 //Winning animation on the cross and circles
-        fadeTransition = FadeTransitionBuilder.create()
-                .duration(Duration.seconds(.2))
-                .node(combo.tiles[0].imgView)
-                .fromValue(1)
-                .toValue(0)
-                .cycleCount(4)
-                .autoReverse(true)
-                .build();
-        fadeTransition2 = FadeTransitionBuilder.create()
-                .duration(Duration.seconds(.2))
-                .node(combo.tiles[1].imgView)
-                .fromValue(1)
-                .toValue(0.1)
-                .cycleCount(4)
-                .autoReverse(true)
-                .build();
-        fadeTransition3 = FadeTransitionBuilder.create()
-                .duration(Duration.seconds(.2))
-                .node(combo.tiles[2].imgView)
-                .fromValue(1)
-                .toValue(0.1)
-                .cycleCount(4)
-                .autoReverse(true)
-                .build();
+    for(int i = 0; i < 3; i++) {
+        fadeTransition = new FadeTransition(Duration.seconds(.2), combo.tiles[i].imgView);
+        fadeTransition.setFromValue(1);
+        fadeTransition.setToValue(0.1);
+        fadeTransition.setCycleCount(4);
+        fadeTransition.setAutoReverse(true);
+        fadeTransition.play();
+    }
+
         if(!turnX){
-            System.out.println("SCOOOOOOOOOOREE!!!");
             int p1CurrScore = Integer.parseInt(p1ScoreLbl.getText());
                 p1CurrScore = p1CurrScore + 1;
             p1ScoreLbl.setText(Integer.toString(p1CurrScore));
         }
         else if(turnX){
-            System.out.println("SCOOOOOOOOOOREENNNNNNRRRR222222!!!");
             int p2CurrScore = Integer.parseInt(p2ScoreLbl.getText());
                 p2CurrScore = p2CurrScore + 1;
             p2ScoreLbl.setText(Integer.toString(p2CurrScore));
         }
-        fadeTransition.play();
-        fadeTransition2.play();
-        fadeTransition3.play();
     }
 
     private class Combo {
@@ -217,25 +202,25 @@ public class GameBoardJavafxView extends Application {
             getChildren().addAll(tileBorder, imgView);
 //A mouseEvent inside our tileClass in order to listen which tile is pressed on
             setOnMouseClicked(event -> {
-                if (!playable){
+                if (!playable)
                     return;
-                }
 
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    if (!turnX)
-                        return;
+                if(!(getValue().equals("X") || getValue().equals("O"))) {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        if (!turnX)
+                            return;
 
-                    drawX();
-                    turnX = false;
-                    checkTiles();
-                }
-                else if (event.getButton() == MouseButton.SECONDARY) {
-                    if (turnX)
-                        return;
+                        drawX();
+                        turnX = false;
+                        checkTiles();
+                    } else if (event.getButton() == MouseButton.SECONDARY) {
+                        if (turnX)
+                            return;
 
-                    drawO();
-                    turnX = true;
-                    checkTiles();
+                        drawO();
+                        turnX = true;
+                        checkTiles();
+                    }
                 }
             });
         }
@@ -247,13 +232,35 @@ public class GameBoardJavafxView extends Application {
 
         private void drawX() {
             imgView.setImage(crossImg);
+            tieCounter = 1 + tieCounter;
             text.setText("X");
         }
 
         private void drawO() {
             imgView.setImage(circleImg);
+            tieCounter = 1 + tieCounter;
             text.setText("O");
         }
+    }
+
+//    public void resetBoardBut(){
+//        resetBut.setOnAction(event ->{
+//            playable = true;
+//            resetBoard();
+//        });
+//    }
+    private void checkForTie(){
+        System.out.println(tieCounter);
+        if(tieCounter == 9 && playable){
+            gameTie = true;
+        }
+        if(gameTie){
+            int currTieScore = Integer.parseInt(tieScoreLbl.getText());
+            currTieScore = currTieScore + 1;
+            tieScoreLbl.setText(Integer.toString(currTieScore));
+        }
+        tieCounter = 0;
+        gameTie = false;
     }
     public static void main(String[] args) {
         launch(args);
