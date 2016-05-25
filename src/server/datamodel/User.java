@@ -7,6 +7,14 @@ import javax.persistence.*;
  */
 
 @Entity
+@NamedQueries({
+        @NamedQuery(
+                name = "getUser",
+                query = "select c FROM User c WHERE c.username = :userName"),
+        @NamedQuery(
+                name = "getAllStudents",
+                query = "SELECT c FROM User c"),
+})
 public class User {
 
     @Id
@@ -17,6 +25,7 @@ public class User {
     private String password;
     @Column(unique = true)
     private String email;
+    private boolean login;
     private int wonMatches;
     private int tieMatches;
     private int lostMatches;
@@ -31,6 +40,14 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public boolean isLogin() {
+        return login;
+    }
+
+    public void setLogin(boolean login) {
+        this.login = login;
     }
 
     public int getId() {

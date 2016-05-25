@@ -26,7 +26,7 @@ public class LoginView extends VBox{
     private PasswordField passwordTextField = new PasswordField();
     private Button loginBtn = new Button("Log in");
     private Button createAccountBtn = new Button("Create account");
-    private Button settingsBtn = new Button("Settings");
+    private Button settingsBtn = new Button("Connection settings");
     private Button quitBtn = new Button("Quit");
     private VBox vBox;
 
@@ -59,6 +59,10 @@ public class LoginView extends VBox{
         loginBtn.setOnAction(buttonListener);
     }
 
+    public void settingsBtnListener (EventHandler<ActionEvent> buttonListener){
+        settingsBtn.setOnAction(buttonListener);
+    }
+
     public void createAccountBtnListener (EventHandler<ActionEvent> buttonListener) {
         createAccountBtn.setOnAction(buttonListener);
     }
@@ -77,6 +81,11 @@ public class LoginView extends VBox{
 
     public void setErrorLabel(String message){
         errorLabel.setText(message);
+    }
+
+    public void clearFields(){
+        usernameTextField.clear();
+        passwordTextField.clear();
     }
 
 }

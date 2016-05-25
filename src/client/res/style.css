@@ -44,7 +44,7 @@ Pane{
 }
 
 .form-button:hover {
-
+    -fx-underline: true;
 }
 
 .form-button:pressed {
@@ -57,3 +57,16 @@ Pane{
     -fx-text-fill: red;
 }
 
+.ok-label {
+    -fx-text-fill: green;
+}
+
+.menu-label {
+    -fx-font-family: 'Press Start 2P', cursive;
+    -fx-font-size: 32px;
+    -fx-cursor: hand;
+}
+
+.menu-label:hover {
+    -fx-underline: true;
+}

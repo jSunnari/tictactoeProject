@@ -21,7 +21,7 @@ public class ServerApp {
         System.out.println("Please input the port: ");
         port = scanner.nextInt();
         // Starts network listening in separate thread
-        NetworkListener networkListener = new NetworkListener(port);
+        NetworkListener networkListener = new NetworkListener(port, controller);
 
         Thread networkThread = new Thread(networkListener);
         networkThread.start();
