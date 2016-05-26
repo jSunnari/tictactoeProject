@@ -43,15 +43,18 @@ public class GameBoardJavafxView extends Application {
     private FadeTransition fadeTransition;
     private Pane gameBoard = new Pane();
     private Pane root = new Pane();
-    private String p1Name = "X";
-    private String p2Name = "O";
+    private String playerX = " (X)";
+    private String playerO = " (O)";
+    private String p1Name = "Adam";
+    private String p2Name = "Steve";
     private String tieName = "Ties";
     private String p1Score = "0";
     private String p2Score = "0";
     private String tieScore = "0";
+    private String turn = "*";
 //Components for scoreboard
-    private Label p1NameLbl = new Label(p1Name);
-    private Label p2NameLbl = new Label(p2Name);
+    private Label p1NameLbl = new Label(p1Name + playerX);
+    private Label p2NameLbl = new Label(p2Name + playerO);
     private Label tieNameLbl = new Label(tieName);
     private Label p1ScoreLbl = new Label(p1Score);
     private Label p2ScoreLbl = new Label(p2Score);
@@ -68,6 +71,8 @@ public class GameBoardJavafxView extends Application {
         p1Vbox.getStyleClass().add("playerScoreVBoxes");
         p2Vbox.getStyleClass().add("playerScoreVBoxes");
         tieVbox.getStyleClass().add("playerScoreVBoxes");
+        resetBut.getStyleClass().add("form-button");
+        showTurn();
     }
 
 
@@ -212,6 +217,7 @@ public class GameBoardJavafxView extends Application {
 
                         drawX();
                         turnX = false;
+                        showTurn();
                         checkTiles();
                     } else if (event.getButton() == MouseButton.SECONDARY) {
                         if (turnX)
@@ -219,6 +225,7 @@ public class GameBoardJavafxView extends Application {
 
                         drawO();
                         turnX = true;
+                        showTurn();
                         checkTiles();
                     }
                 }
@@ -262,6 +269,27 @@ public class GameBoardJavafxView extends Application {
         tieCounter = 0;
         gameTie = false;
     }
+    private void showTurn(){
+        if(turnX){
+            String changeTurn = p1NameLbl.getText();
+            if(changeTurn.contains(turn)){
+                   p1NameLbl.setText(p1Name + playerX);
+            }else {
+                System.out.println(changeTurn);
+                p1NameLbl.setText(changeTurn + turn);
+            }
+        }else{
+            String changeTurn = p2NameLbl.getText();
+
+            if(changeTurn.contains(turn)){
+                p2NameLbl.setText(p2Name + playerO);
+            }else {
+                System.out.println(changeTurn);
+                p2NameLbl.setText(changeTurn + turn);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
