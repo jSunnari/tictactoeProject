@@ -5,6 +5,7 @@ package client.network;
  * Handles the communication between server and client.
  */
 
+import client.beans.MarkerData;
 import client.beans.Message;
 import client.beans.User;
 import client.logic.ClientController;
@@ -92,13 +93,31 @@ public class NetworkCommunication implements Runnable {
                 clientController.createAccountResponse("created", "User has been created!");
                 break;
 
+            /**
+             * GAME COMMANDS:
+             */
             case "startGame":
                 User opponentUser = gson.fromJson(cmdData.get(0), User.class);
                 clientController.opponentConnected(opponentUser);
                 break;
 
-            case "gameDrawX":
-                clientController.test("vi har kontakt");
+            case "drawMarker":
+                MarkerData markerData = gson.fromJson(cmdData.get(0), MarkerData.class);
+                clientController.drawMarker(markerData);
+                break;
+
+            case "setPlayer1":
+                User player1 = gson.fromJson(cmdData.get(0), User.class);
+                clientController.setCurrentUser(player1);
+                break;
+
+            case "setPlayer2":
+                User player2 = gson.fromJson(cmdData.get(0), User.class);
+                clientController.setCurrentUser(player2);
+                break;
+
+            case "resetGame":
+                clientController.resetGame();
                 break;
 
         }

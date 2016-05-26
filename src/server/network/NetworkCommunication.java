@@ -5,8 +5,10 @@ package server.network;
  * Threaded class.
  * Handles the communication between server and a client.
  */
+
 import com.google.gson.Gson;
 import server.beans.ConnectPlayers;
+import server.beans.MarkerData;
 import server.beans.Message;
 import server.datamodel.User;
 import server.logic.ServerController;
@@ -156,11 +158,20 @@ public class NetworkCommunication implements Runnable{
                 gameCommunication.removePlayer(currUser);
                 break;
 
-            case "gameDrawX":
-                User opponent = gson.fromJson(cmdData.get(0), User.class);
-                gameCommunication.updateClient(opponent, "gameDrawX");
-                send("gameDrawX", "");
+            case "markerData":
+                MarkerData markerData = gson.fromJson(cmdData.get(0), MarkerData.class);
+                System.out.println(markerData.getMarkerId());
+                //Find opponent and send data:
+                gameCommunication.updateClient("drawMarker", markerData.getOpponentUsername(), markerData);
+                //Send back data to player:
+                send("drawMarker", markerData);
+                break;
 
+            case "resetGame":
+                User opponent = gson.fromJson(cmdData.get(0), User.class);
+
+                gameCommunication.updateClient("resetGame", opponent.getUsername());
+                send("resetGame", "");
                 break;
         }
     }

@@ -1,18 +1,15 @@
 package client.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javafx.animation.*;
-import javafx.application.Application;
+import javafx.animation.FadeTransition;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -20,46 +17,48 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class GameBoardJavafxView extends Application {
+import java.util.ArrayList;
+import java.util.List;
+
+public class GameBoardJavafxView extends Pane {
 
     private boolean playable = true;
     private boolean turnX = true;
     private boolean gameTie = false;
-//Boardgame dimensions
+    //Boardgame dimensions
     private int HEIGHT = 540;
     private int WIDTH = 540;
     private int tileWidth = 180;
     private int tileHeight = 180;
     private int tieCounter = 0;
-//Boardmatrix for containing our tiles
+    //Boardmatrix for containing our tiles
     private Tile[][] board = new Tile[3][3];
     //List for possible win combinations
     private List<Combo> combos = new ArrayList<>();
-    private Image crossImg = new Image("../res/crossWhite.png");
-    private Image circleImg = new Image("../res/circleWhite.png");
+    private Image crossImg = new Image("file:src/client/res/crossWhite.png");
+    private Image circleImg = new Image("file:src/client/res/circleWhite.png");
     private FadeTransition fadeTransition;
     private Pane gameBoard = new Pane();
-    private Pane root = new Pane();
+    private Pane root;
     private String playerX = " (X)";
     private String playerO = " (O)";
-    private String p1Name = "Adam";
-    private String p2Name = "Steve";
+    private String p1Name = "";
+    private String p2Name = "";
     private String tieName = "Ties";
     private String p1Score = "0";
     private String p2Score = "0";
     private String tieScore = "0";
     private String turn = "*";
-//Components for scoreboard
-    private Label p1NameLbl = new Label(p1Name + playerX);
-    private Label p2NameLbl = new Label(p2Name + playerO);
+    //Components for scoreboard
+    private Label p1NameLbl = new Label();
+    private Label p2NameLbl = new Label();
     private Label tieNameLbl = new Label(tieName);
     private Label p1ScoreLbl = new Label(p1Score);
     private Label p2ScoreLbl = new Label(p2Score);
     private Label tieScoreLbl = new Label(tieScore);
-//Layout boxes for the scoreboard
+    //Layout boxes for the scoreboard
     private Button resetBut = new Button("PLAY AGAIN!!");
     private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
     private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl);
@@ -68,21 +67,28 @@ public class GameBoardJavafxView extends Application {
     private VBox gameVBox = new VBox();
 
     public GameBoardJavafxView(){
+        root = this;
         p1Vbox.getStyleClass().add("playerScoreVBoxes");
         p2Vbox.getStyleClass().add("playerScoreVBoxes");
         tieVbox.getStyleClass().add("playerScoreVBoxes");
         resetBut.getStyleClass().add("form-button");
+        root.getStyleClass().add("gameboard-pane");
         showTurn();
+        gameVBox.getChildren().addAll(createContent(), scoreBoardHbox);
+        root.getChildren().add(gameVBox);
     }
 
 
     private Parent createContent() {
-//Setting a windowsize for our tictactoeGame
+
+        //Setting a windowsize for our tictactoeGame
         gameBoard.setPrefSize(WIDTH, HEIGHT);
-//A loop within a loop to add our tiles to the board matrix
+        int id = 1;
+        //A loop within a loop to add our tiles to the board matrix
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                Tile tile = new Tile();
+                Tile tile = new Tile(id);
+                id++;
                 tile.setTranslateX(j * tileWidth);
                 tile.setTranslateY(i * tileHeight);
                 gameBoard.getChildren().add(tile);
@@ -114,24 +120,15 @@ public class GameBoardJavafxView extends Application {
         return gameBoard;
     }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        gameVBox.getChildren().addAll(createContent(), scoreBoardHbox);
-        root.getChildren().add(gameVBox);
-        resetBut.setOnAction(event ->{
-            playable = true;
-            checkForTie();
-            resetBoard();
-        });
-        Scene scene = new Scene(root, 1024, 768);
-        scene.getStylesheets().add("../res/style.css"); //check the file style.css in /res.
-        scene.getStylesheets().add("https://fonts.googleapis.com/css?family=VT323");
-        scene.getStylesheets().add("https://fonts.googleapis.com/css?family=Press+Start+2P");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    public void resetGameListener (EventHandler<ActionEvent> buttonListener){
+        resetBut.setOnAction(buttonListener);
     }
 
-    private void checkTiles() {
+    public void setPlayable(boolean playable){
+        this.playable = playable;
+    }
+
+    public void checkTiles() {
         for (Combo combo : combos) {
             if (combo.isComplete()) {
                 playable = false;
@@ -142,7 +139,7 @@ public class GameBoardJavafxView extends Application {
         }
     }
 
-    private void resetBoard(){
+    public void resetBoard(){
         //Looping through our tiles in the board and reset our images and texts
         for(int i = 0; i < 3; i++ ){
             for(int j = 0; j < 3; j++){
@@ -150,30 +147,33 @@ public class GameBoardJavafxView extends Application {
                 board[j][i].text.setText(null);
             }
         }
+        playable = true;
     }
 
     private void playWinAnimation(Combo combo) {
+        Platform.runLater(() -> {
 
-//Winning animation on the cross and circles
-    for(int i = 0; i < 3; i++) {
-        fadeTransition = new FadeTransition(Duration.seconds(.2), combo.tiles[i].imgView);
-        fadeTransition.setFromValue(1);
-        fadeTransition.setToValue(0.1);
-        fadeTransition.setCycleCount(4);
-        fadeTransition.setAutoReverse(true);
-        fadeTransition.play();
-    }
+            //Winning animation on the cross and circles
+            for(int i = 0; i < 3; i++) {
+                fadeTransition = new FadeTransition(Duration.seconds(.2), combo.tiles[i].imgView);
+                fadeTransition.setFromValue(1);
+                fadeTransition.setToValue(0.1);
+                fadeTransition.setCycleCount(4);
+                fadeTransition.setAutoReverse(true);
+                fadeTransition.play();
+            }
 
-        if(!turnX){
-            int p1CurrScore = Integer.parseInt(p1ScoreLbl.getText());
+            if(!turnX){
+                int p1CurrScore = Integer.parseInt(p1ScoreLbl.getText());
                 p1CurrScore = p1CurrScore + 1;
-            p1ScoreLbl.setText(Integer.toString(p1CurrScore));
-        }
-        else if(turnX){
-            int p2CurrScore = Integer.parseInt(p2ScoreLbl.getText());
+                p1ScoreLbl.setText(Integer.toString(p1CurrScore));
+            }
+            else if(turnX){
+                int p2CurrScore = Integer.parseInt(p2ScoreLbl.getText());
                 p2CurrScore = p2CurrScore + 1;
-            p2ScoreLbl.setText(Integer.toString(p2CurrScore));
-        }
+                p2ScoreLbl.setText(Integer.toString(p2CurrScore));
+            }
+        });
     }
 
     private class Combo {
@@ -191,13 +191,15 @@ public class GameBoardJavafxView extends Application {
         }
     }
 
-    private class Tile extends StackPane {
-//ImageView to hold the imported images either cross or circle
+    public class Tile extends StackPane {
+        //ImageView to hold the imported images either cross or circle
         private ImageView imgView = new ImageView();
-//Create a textholder to help us identify the different images
+        //Create a textholder to help us identify the different images
         private Text text = new Text();
+        private int id;
 
-        private Tile() {
+        private Tile(int id) {
+            this.id = id;
             Rectangle tileBorder = new Rectangle(tileWidth, tileHeight);
             tileBorder.setFill(Color.BLACK);
             tileBorder.setStroke(Color.WHITE);
@@ -205,7 +207,9 @@ public class GameBoardJavafxView extends Application {
             text.setVisible(false);
             setAlignment(Pos.CENTER);
             getChildren().addAll(tileBorder, imgView);
-//A mouseEvent inside our tileClass in order to listen which tile is pressed on
+
+            /*
+            //A mouseEvent inside our tileClass in order to listen which tile is pressed on
             setOnMouseClicked(event -> {
                 if (!playable)
                     return;
@@ -216,6 +220,7 @@ public class GameBoardJavafxView extends Application {
                             return;
 
                         drawX();
+                        System.out.println(getTileId());
                         turnX = false;
                         showTurn();
                         checkTiles();
@@ -230,34 +235,36 @@ public class GameBoardJavafxView extends Application {
                     }
                 }
             });
+            */
         }
 
-        private String getValue() {
+        public String getValue() {
             return text.getText();
         }
 
-
-        private void drawX() {
+        public void drawX() {
             imgView.setImage(crossImg);
             tieCounter = 1 + tieCounter;
             text.setText("X");
         }
 
-        private void drawO() {
+        public void drawO() {
             imgView.setImage(circleImg);
             tieCounter = 1 + tieCounter;
             text.setText("O");
         }
+
+        public int getTileId(){
+            return id;
+        }
     }
 
-//    public void resetBoardBut(){
-//        resetBut.setOnAction(event ->{
-//            playable = true;
-//            resetBoard();
-//        });
-//    }
-    private void checkForTie(){
-//The tieCounter counts the number of pieces are out on the board and checks if the game has not been won by anyone. Then it's a tie
+    public Tile[][] getBoard(){
+        return board;
+    }
+
+    public void checkForTie(){
+        //The tieCounter counts the number of pieces are out on the board and checks if the game has not been won by anyone. Then it's a tie
         if(tieCounter == 9 && playable){
             gameTie = true;
         }
@@ -269,30 +276,46 @@ public class GameBoardJavafxView extends Application {
         tieCounter = 0;
         gameTie = false;
     }
-    private void showTurn(){
-        //Check if the playerLbl contains the char *, remove and add to other player if it does
-        if(turnX){
-            p2NameLbl.setText(p2Name + playerO);
-            String changeTurn = p1NameLbl.getText();
-            if(changeTurn.contains(turn)){
-                   p1NameLbl.setText(p1Name + playerX);
-            }else {
-                System.out.println(changeTurn);
-                p1NameLbl.setText(changeTurn + turn);
-            }
-        }else{
-            p1NameLbl.setText(p1Name + playerX);
-            String changeTurn = p2NameLbl.getText();
-            if(changeTurn.contains(turn)){
+
+    public void showTurn(){
+        Platform.runLater(() -> {
+            //Check if the playerLbl contains the char *, remove and add to other player if it does
+            if(turnX){
                 p2NameLbl.setText(p2Name + playerO);
-            }else {
-                System.out.println(changeTurn);
-                p2NameLbl.setText(changeTurn + turn);
+                String changeTurn = p1NameLbl.getText();
+                if(changeTurn.contains(turn)){
+                    p1NameLbl.setText(p1Name + playerX);
+                }else {
+                    p1NameLbl.setText(changeTurn + turn);
+                }
+            }else{
+                p1NameLbl.setText(p1Name + playerX);
+                String changeTurn = p2NameLbl.getText();
+                if(changeTurn.contains(turn)){
+                    p2NameLbl.setText(p2Name + playerO);
+                }else {
+                    p2NameLbl.setText(changeTurn + turn);
+                }
             }
-        }
+        });
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    public boolean isPlayable() {
+        return playable;
     }
+
+    public void setPlayerX(String name){
+        Platform.runLater(() -> {
+            p1Name = name;
+            p1NameLbl.setText(p1Name + playerX);
+        });
+    }
+
+    public void setPlayerO(String name){
+        Platform.runLater(() -> {
+            p2Name = name;
+            p2NameLbl.setText(p2Name + playerO);
+        });
+    }
+
 }
