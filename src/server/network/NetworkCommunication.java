@@ -2,9 +2,9 @@ package server.network;
 
 /**
  * Network communication for server.
- * Handles the communication between server and client.
+ * Threaded class.
+ * Handles the communication between server and a client.
  */
-
 import com.google.gson.Gson;
 import server.beans.ConnectPlayers;
 import server.beans.Message;
@@ -29,18 +29,16 @@ public class NetworkCommunication implements Runnable{
     private User currUser;
     private PrintWriter output;
     private ServerController serverController;
-    private NetworkListener networkListener;
     private Gson gson;
     private ConnectPlayers connectPlayers;
-    private GameCommunication gameCommunication;
+    private GameController gameCommunication;
 
     /**
      * Constructor sets boolean clientConnected to true.
      * @param socket = reference to socket, used for creating streams.
      */
-    public NetworkCommunication(Socket socket, NetworkListener networkListener, ServerController serverController, GameCommunication gameCommunication) {
+    public NetworkCommunication(Socket socket, ServerController serverController, GameController gameCommunication) {
         this.socket = socket;
-        this.networkListener = networkListener;
         this.serverController = serverController;
         this.gameCommunication = gameCommunication;
         gson = new Gson();
@@ -143,16 +141,20 @@ public class NetworkCommunication implements Runnable{
                 serverController.updateUser(updateUser);
                 break;
 
+            /**
+             * GAME-COMMANDS - the gamecontroller will take care of these: **
+             */
             case "startGame":
                 //Create a "ConnectPlayers"-object with current user:
                 connectPlayers = new ConnectPlayers(currUser, this);
-                //Send to networklistener:
+                //Send to the gamecontroller:
                 gameCommunication.connectPlayers(connectPlayers);
                 break;
 
             case "stopGame":
+                //Remove the user from gamecontroller:
                 gameCommunication.removePlayer(currUser);
-
+                break;
 
             case "gameDrawX":
                 User opponent = gson.fromJson(cmdData.get(0), User.class);
@@ -160,9 +162,6 @@ public class NetworkCommunication implements Runnable{
                 send("gameDrawX", "");
 
                 break;
-
-
-
         }
     }
 
