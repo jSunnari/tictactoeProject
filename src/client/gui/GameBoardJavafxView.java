@@ -78,7 +78,6 @@ public class GameBoardJavafxView extends Pane {
         root.getChildren().add(gameVBox);
     }
 
-
     private Parent createContent() {
 
         //Setting a windowsize for our tictactoeGame
