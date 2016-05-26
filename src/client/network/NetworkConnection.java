@@ -5,10 +5,7 @@ package client.network;
 import client.logic.ClientController;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import java.net.*;
 
 /**
  * Created by Jonas on 2016-05-23.
@@ -29,25 +26,18 @@ public class NetworkConnection {
             networkCommunication = new NetworkCommunication(socket, clientController);
             Thread connectionThread = new Thread(networkCommunication);
             connectionThread.start();
+            clientController.setConnectedToServer(true);
 
-
-        } catch (SocketTimeoutException | UnknownHostException e){
-            //If there is an timeout on the connection or an unknown host, call connectionFailed-method:
+        } catch (SocketTimeoutException | UnknownHostException | ConnectException | IllegalArgumentException e){
+            //If there is an timeout on the connection or an unknown host/port, call connectionFailed-method:
             clientController.connectionFailed();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void disconnect(){
-        networkCommunication.disconnect();
-
-        try {
-            socket.close();
-            System.exit(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void disconnect(boolean exit){
+        networkCommunication.disconnect(exit);
     }
 
     public NetworkCommunication getNetworkCommunication(){

@@ -58,4 +58,16 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * Update an already existing user.
+     *
+     * @param user = user to update.
+     */
+    public void updateUser(User user){
+        etx = em.getTransaction();
+        etx.begin();
+        em.merge(user);
+        etx.commit();
+    }
+
 }

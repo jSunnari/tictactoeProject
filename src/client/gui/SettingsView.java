@@ -20,6 +20,7 @@ public class SettingsView extends VBox {
     private Label portLabel = new Label("Port:");
     private TextField ipTextField = new TextField("localhost");
     private TextField portTextField = new TextField("50123");
+    private Button okBtn = new Button("OK");
     private Button backBtn = new Button("Back");
 
 
@@ -35,12 +36,18 @@ public class SettingsView extends VBox {
                 ipTextField,
                 portLabel,
                 portTextField,
+                okBtn,
                 backBtn
         );
 
         VBox.setMargin(headerText, new Insets(0,0,30,0));
+        okBtn.getStyleClass().add("form-button");
         backBtn.getStyleClass().add("form-button");
         headerText.getStyleClass().add("form-header");
+    }
+
+    public void okBtnListener(EventHandler<ActionEvent> buttonListener){
+        okBtn.setOnAction(buttonListener);
     }
 
     public void backBtnListener(EventHandler<ActionEvent> buttonListener){

@@ -23,12 +23,14 @@ public class NetworkListener implements Runnable {
     private Socket socket;
     private int port;
     private boolean connected = false;
+    private GameController gameCommunication;
 
     public NetworkListener(int port, ServerController controller) {
         try {
             this.port = port;
             this.serverController = controller;
             serverSocket = new ServerSocket(port);
+            gameCommunication = new GameController();
             connected = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -49,10 +51,12 @@ public class NetworkListener implements Runnable {
                 socket = serverSocket.accept();
 
                 //When a client has connected:
-                System.out.println("A client has connected!");
+                System.out.println("A client has connected from " + socket.getInetAddress());
 
                 //Creates an object of the NetworkCommunication and starts a new thread:
-                Thread clientThread = new Thread(new NetworkCommunication(socket, serverController));
+                NetworkCommunication networkCommunication = new NetworkCommunication(socket, serverController, gameCommunication);
+                Thread clientThread = new Thread(networkCommunication);
+
                 clientThread.start();
             }
             catch (IOException | InterruptedException e) {
@@ -61,12 +65,14 @@ public class NetworkListener implements Runnable {
         }
     }
 
+
+
     public void disconnectServer(){
         connected = false;
         try {
             serverSocket.close();
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
