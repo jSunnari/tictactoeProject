@@ -257,7 +257,7 @@ public class GameBoardJavafxView extends Application {
 //        });
 //    }
     private void checkForTie(){
-        System.out.println(tieCounter);
+//The tieCounter counts the number of pieces are out on the board and checks if the game has not been won by anyone. Then it's a tie
         if(tieCounter == 9 && playable){
             gameTie = true;
         }
@@ -270,7 +270,9 @@ public class GameBoardJavafxView extends Application {
         gameTie = false;
     }
     private void showTurn(){
+        //Check if the playerLbl contains the char *, remove and add to other player if it does
         if(turnX){
+            p2NameLbl.setText(p2Name + playerO);
             String changeTurn = p1NameLbl.getText();
             if(changeTurn.contains(turn)){
                    p1NameLbl.setText(p1Name + playerX);
@@ -279,8 +281,8 @@ public class GameBoardJavafxView extends Application {
                 p1NameLbl.setText(changeTurn + turn);
             }
         }else{
+            p1NameLbl.setText(p1Name + playerX);
             String changeTurn = p2NameLbl.getText();
-
             if(changeTurn.contains(turn)){
                 p2NameLbl.setText(p2Name + playerO);
             }else {
