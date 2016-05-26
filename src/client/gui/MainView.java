@@ -37,7 +37,7 @@ public class MainView {
         //Set scene:
         Scene scene = new Scene(mainBorderPane, 1024, 768);
         //Add css-file and google-fonts:
-        scene.getStylesheets().add("file:res/style.css"); //check the file style.css in /res.
+        scene.getStylesheets().add("file:src/client/res/style.css"); //check the file style.css in /res.
         scene.getStylesheets().add("https://fonts.googleapis.com/css?family=VT323");
         scene.getStylesheets().add("https://fonts.googleapis.com/css?family=Press+Start+2P");
 
@@ -48,7 +48,7 @@ public class MainView {
     //Method for building components:
     void buildApp() {
         mainBorderPane = new BorderPane();
-        logoImageView = new ImageView(new Image("file:res/logo.png"));
+        logoImageView = new ImageView(new Image("file:src/client/res/logo.png"));
     }
 
     //Method for initializing components:

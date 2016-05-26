@@ -4,6 +4,7 @@ package client.logic;
  * ClientController
  */
 
+import client.beans.MarkerData;
 import client.beans.User;
 import client.gui.*;
 import client.network.NetworkCommunication;
@@ -20,8 +21,10 @@ public class ClientController{
     private NetworkConnection networkConnection;
     private NetworkCommunication networkCommunication;
     private User currUser;
-    private User cuttOpponent;
+    private User currOpponent;
     private boolean connectedToServer = false;
+    private GameBoardJavafxView.Tile[][] board;
+    private boolean yourTurn = false;
 
     //VIEWS:
     private UserdetailsView userdetailsView = new UserdetailsView();
@@ -29,6 +32,7 @@ public class ClientController{
     private SettingsView settingsView = new SettingsView();
     private UserdetailsView updateAccount = new UserdetailsView();
     private LoadingView loadingView = new LoadingView();
+    private GameBoardJavafxView gameBoardView = new GameBoardJavafxView();
 
     //Gets the mainview and loginform from ClientApp-class (main-class).
     public ClientController(MainView mainView, LoginView loginView) {
@@ -81,6 +85,13 @@ public class ClientController{
 
         //BACK - switches to the loginform again.
         settingsView.backBtnListener(event -> mainView.setMainContent(loginView));
+
+        /**
+         * GameBoardView, Listeners:
+         */
+
+        gameBoardView.resetGameListener(event -> networkCommunication.send("resetGame", currOpponent));
+
 
     }
 
@@ -213,19 +224,126 @@ public class ClientController{
         });
     }
 
+    /**
+     * *************** GAME CONTROLS *******************
+     */
+
+
     void play(){
         mainView.setMainContent(loadingView);
         loadingView.play();
         networkCommunication.send("startGame", "");
     }
 
-    public void opponentConnected(User opponentUser){
-        cuttOpponent = opponentUser;
-        Platform.runLater(() -> loadingView.testConnected(cuttOpponent.getUsername()));
+    public void resetGame(){
+        gameBoardView.checkForTie();
+        gameBoardView.setPlayable(true);
+        gameBoardView.resetBoard();
+    }
 
-        loadingView.testListener(event -> {
-            networkCommunication.send("gameDrawX", cuttOpponent);
-        });
+    void clickOnTile(){
+        board = gameBoardView.getBoard();
+
+        //Looping through our tiles in the board
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                GameBoardJavafxView.Tile currentTile = board[j][i];
+                currentTile.setOnMouseClicked(event -> {
+                    if (gameBoardView.isPlayable()) {
+
+                        System.out.println(currentTile.getValue());
+
+                        if (yourTurn && !(currentTile.getValue().equals("X") || currentTile.getValue().equals("O"))) {
+                            sendMarkerData(currentTile);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    void sendMarkerData(GameBoardJavafxView.Tile currentTile){
+        MarkerData markerData = new MarkerData(currentTile.getTileId(), currOpponent.getUsername());
+        if (currUser.getPlayer() == 1){
+            markerData.setMarkerType("X");
+        }
+        else if(currUser.getPlayer() == 2){
+            markerData.setMarkerType("O");
+        }
+        networkCommunication.send("markerData", markerData);
+    }
+
+    public void drawMarker(MarkerData markerData){
+        //Looping through our tiles in the board
+        for(int i = 0; i < 3; i++ ){
+            for(int j = 0; j < 3; j++){
+                if (board[j][i].getTileId() == markerData.getMarkerId()){
+
+                    if (markerData.getMarkerType().equals("X")){
+                        board[j][i].drawX();
+                        System.out.println("value x: " + board[j][i].getValue());
+                        clickOnTile();
+
+                    }
+                    else if (markerData.getMarkerType().equals("O")){
+                        board[j][i].drawO();
+                        System.out.println("value o: " + board[j][i].getValue());
+                        clickOnTile();
+
+                    }
+
+                }
+            }
+        }
+
+        gameBoardView.checkTiles();
+
+        if (yourTurn){
+            yourTurn = false;
+
+            if (currUser.getPlayer() == 1){
+                gameBoardView.setPlayerX(currUser.getUsername());
+                gameBoardView.setPlayerO(currOpponent.getUsername() + "*");
+
+            }
+            else if(currUser.getPlayer() == 2) {
+                gameBoardView.setPlayerO(currUser.getUsername());
+                gameBoardView.setPlayerX(currOpponent.getUsername() + "*");
+            }
+
+        }
+        else{
+            yourTurn = true;
+
+            if (currUser.getPlayer() == 1){
+                gameBoardView.setPlayerX(currUser.getUsername() + "*");
+                gameBoardView.setPlayerO(currOpponent.getUsername());
+            }
+            else if(currUser.getPlayer() == 2) {
+                gameBoardView.setPlayerO(currUser.getUsername() + "*");
+                gameBoardView.setPlayerX(currOpponent.getUsername());
+            }
+        }
+    }
+
+    public void opponentConnected(User opponentUser){
+        currOpponent = opponentUser;
+
+        System.out.println("curent user: " + currUser.getPlayer());
+        System.out.println("opponent: " + opponentUser.getPlayer());
+
+        if (currUser.getPlayer() == 1){
+            yourTurn = true;
+            gameBoardView.setPlayerX(currUser.getUsername() + "*");
+            gameBoardView.setPlayerO(opponentUser.getUsername());
+        }
+        else if(currUser.getPlayer() == 2) {
+            gameBoardView.setPlayerO(currUser.getUsername());
+            gameBoardView.setPlayerX(opponentUser.getUsername() + "*");
+        }
+
+        Platform.runLater(() -> mainView.setMainContent(gameBoardView));
+        clickOnTile();
     }
 
     public void test(String test){

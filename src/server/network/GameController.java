@@ -12,6 +12,7 @@ package server.network;
  */
 
 import server.beans.ConnectPlayers;
+import server.beans.MarkerData;
 import server.datamodel.User;
 
 import java.util.ArrayList;
@@ -43,11 +44,20 @@ public class GameController {
         counter++;
         connectPlayers.add(user);
         if (counter == 2){
-            User player1 = connectPlayers.get(0).getUser();
-            User player2 = connectPlayers.get(1).getUser();
+            User player1 = connectPlayers.get(connectPlayers.size()-2).getUser();
+            player1.setPlayer(1);
 
-            connectPlayers.get(0).getNetworkCommunication().send("startGame", player2);
-            connectPlayers.get(1).getNetworkCommunication().send("startGame", player1);
+            User player2 = connectPlayers.get(connectPlayers.size()-1).getUser();
+            player2.setPlayer(2);
+
+            System.out.println("player1 " + player1.getPlayer());
+            System.out.println("player2 " + player2.getPlayer());
+
+            connectPlayers.get(connectPlayers.size()-2).getNetworkCommunication().send("setPlayer1", player1);
+            connectPlayers.get(connectPlayers.size()-1).getNetworkCommunication().send("setPlayer2", player2);
+
+            connectPlayers.get(connectPlayers.size()-2).getNetworkCommunication().send("startGame", player2);
+            connectPlayers.get(connectPlayers.size()-1).getNetworkCommunication().send("startGame", player1);
 
             counter = 0;
         }
@@ -62,14 +72,21 @@ public class GameController {
      * When it finds it, it will send the message via the already existing NetworkCommunication-class(threaded class for the
      * opponent user).
      *
-     * @param user = user to send to.
-     * @param command = command to send.
+     *
+     *
      */
-    public void updateClient(User user, String command){
+    public void updateClient(String command, String user, MarkerData markerData){
         for (ConnectPlayers player : connectPlayers){
-            if (user.getUsername().equals(player.getUser().getUsername())){
+            if (user.equals(player.getUser().getUsername())) {
+                player.getNetworkCommunication().send(command, markerData);
+            }
+        }
+    }
+
+    public void updateClient(String command, String user){
+        for (ConnectPlayers player : connectPlayers){
+            if (user.equals(player.getUser().getUsername())) {
                 player.getNetworkCommunication().send(command, "");
-                break;
             }
         }
     }

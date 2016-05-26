@@ -26,6 +26,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private boolean login;
+    private int player;
     private int wonMatches;
     private int tieMatches;
     private int lostMatches;
@@ -44,6 +45,14 @@ public class User {
 
     public boolean isLogin() {
         return login;
+    }
+
+    public int getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(int player) {
+        this.player = player;
     }
 
     public void setLogin(boolean login) {
