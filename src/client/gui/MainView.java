@@ -29,7 +29,7 @@ public class MainView {
         this.window = window;
         this.loginView = loginView;
         window.setTitle("TicTacToe");
-
+        window.getIcons().add(new Image("file:src/client/res/TicTacToeIconSmall.png"));
         //Build and init components:
         buildApp();
         initApp();
