@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import sun.plugin.javascript.navig.Anchor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,23 +59,23 @@ public class GameBoardJavafxView extends HBox {
     private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
     private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl);
     private VBox tieVbox = new VBox( tieNameLbl, tieScoreLbl);
-    private HBox scoreBoardHbox = new HBox(exitBut, p1Vbox, tieVbox, p2Vbox, resetBut);
-    private VBox gameVBox = new VBox();
+    private VBox butHbox = new VBox(resetBut, exitBut);
+    private VBox scoreBoardVbox = new VBox( p1Vbox, tieVbox, p2Vbox, butHbox);
 
     public GameBoardJavafxView(){
 
         gameBoardHbox = this;
 
-        gameVBox.getChildren().addAll(createContent(), scoreBoardHbox);
-        gameVBox.setAlignment(Pos.CENTER);
-        p1Vbox.setAlignment(Pos.CENTER);
-        p2Vbox.setAlignment(Pos.CENTER);
-        tieVbox.setAlignment(Pos.CENTER);
-        scoreBoardHbox.setAlignment(Pos.CENTER);
-        gameVBox.setPadding(new Insets(10));
-        gameBoardHbox.getChildren().addAll(gameVBox);
+        p1Vbox.setAlignment(Pos.TOP_CENTER);
+        p2Vbox.setAlignment(Pos.TOP_CENTER);
+        tieVbox.setAlignment(Pos.TOP_CENTER);
+        scoreBoardVbox.setAlignment(Pos.TOP_CENTER);
+
+        scoreBoardVbox.setPadding(new Insets(80));
+
+        gameBoardHbox.getChildren().addAll(createContent(), scoreBoardVbox);
         gameBoardHbox.setPadding(new Insets(0, 0, 0, 30));
-        gameBoardHbox.setAlignment(Pos.CENTER);
+        gameBoardHbox.setAlignment(Pos.TOP_CENTER);
 
         p1Vbox.getStyleClass().add("playerScoreVBoxes");
         p2Vbox.getStyleClass().add("playerScoreVBoxes");
