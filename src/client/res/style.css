@@ -9,6 +9,9 @@ BorderPane {
 gameboard-pane{
     -fx-background-color: black;
 }
+.boardGameStyle{
+    -fx-alignment: center;
+}
 
 .playerScoreVBoxes{
     -fx-pref-width: 160px;

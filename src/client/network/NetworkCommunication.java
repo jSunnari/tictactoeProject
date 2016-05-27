@@ -126,6 +126,11 @@ public class NetworkCommunication implements Runnable {
                 clientController.setScore(winningPlayer);
                 break;
 
+            case "endGame":
+                loginUser = gson.fromJson(cmdData.get(0), User.class);
+                clientController.setCurrentUser(loginUser);
+                break;
+
         }
 
     }

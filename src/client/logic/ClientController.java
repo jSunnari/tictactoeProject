@@ -95,7 +95,7 @@ public class ClientController{
 
         gameBoardView.resetGameListener(event -> networkCommunication.send("resetGame", currOpponent));
 
-
+        gameBoardView.exitGameListener(event -> networkCommunication.send("endGame", currOpponent));
     }
 
     void connect(){
@@ -243,6 +243,10 @@ public class ClientController{
         //gameBoardView.checkForTie();
         gameBoardView.setPlayable(true);
         gameBoardView.resetBoard();
+    }
+
+    public void endGame(){
+        gameBoardView.endGame();
     }
 
     void clickOnTile(){
