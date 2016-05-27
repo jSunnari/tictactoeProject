@@ -10,6 +10,8 @@ import client.gui.*;
 import client.network.NetworkCommunication;
 import client.network.NetworkConnection;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * Created by Jonas on 2016-05-20.
@@ -26,6 +28,7 @@ public class ClientController{
     private GameBoardJavafxView.Tile[][] board;
     private boolean yourTurn = false;
     private int clickCounter = 0;
+    private ObservableList<User> highscoreList = FXCollections.observableArrayList();
 
     //VIEWS:
     private MainView mainView;
@@ -36,6 +39,7 @@ public class ClientController{
     private UserdetailsView updateAccount = new UserdetailsView();
     private LoadingView loadingView = new LoadingView();
     private GameBoardJavafxView gameBoardView = new GameBoardJavafxView();
+    private ResultView resultView = new ResultView();
 
     //Gets the mainview and loginform from ClientApp-class (main-class).
     public ClientController(MainView mainView, LoginView loginView) {
@@ -72,7 +76,10 @@ public class ClientController{
         /**
          * MenuView, Listeners:
          */
+        //PLAY - call method play();
         menuView.playMenuListener(event -> play());
+
+        menuView.resultMenuListener(event -> updateResults());
 
         //LOGOUT - calls method logout();
         menuView.logoutMenuListener(event -> logout());
@@ -90,12 +97,24 @@ public class ClientController{
         settingsView.backBtnListener(event -> mainView.setMainContent(loginView));
 
         /**
+         * LoadingView, Listeners:
+         */
+        loadingView.cancelButtonListener(event -> cancelGame());
+
+        /**
          * GameBoardView, Listeners:
          */
-
+        //RESET GAME - sends a command to server.
         gameBoardView.resetGameListener(event -> networkCommunication.send("resetGame", currOpponent));
 
-        gameBoardView.exitGameListener(event -> networkCommunication.send("endGame", currOpponent));
+        gameBoardView.exitGameListener(event -> stoppedGame());
+
+        /**
+         * ResultView, Listeners:
+         */
+        //BACK - switch view to main-menu.
+        resultView.backBtnListener(event -> mainView.setMainContent(menuView));
+
     }
 
     void connect(){
@@ -178,6 +197,13 @@ public class ClientController{
         currUser = null;
     }
 
+    void updateResults(){
+        networkCommunication.send("getHighscore", "");
+        resultView.setHighscoreList(highscoreList);
+        resultView.setCurrentUser(currUser);
+        Platform.runLater(() -> mainView.setMainContent(resultView));
+    }
+
     /**
      * Create account-method,
      *
@@ -238,15 +264,28 @@ public class ClientController{
         networkCommunication.send("startGame", "");
     }
 
+    void cancelGame(){
+        networkCommunication.send("removeFromGameList", "");
+        mainView.setMainContent(menuView);
+    }
+
+    void stoppedGame(){
+        networkCommunication.send("updateUser", currUser);
+        networkCommunication.send("stopGame", currOpponent);
+        cancelGame();
+    }
+
+    public void opponentStoppedGame(){
+        networkCommunication.send("updateUser", currUser);
+        networkCommunication.send("removeFromGameList", "");
+        Platform.runLater(() -> mainView.setMainContent(menuView));
+    }
+
     public void resetGame(){
         clickCounter = 0;
         //gameBoardView.checkForTie();
         gameBoardView.setPlayable(true);
         gameBoardView.resetBoard();
-    }
-
-    public void endGame(){
-        gameBoardView.endGame();
     }
 
     void clickOnTile(){
@@ -302,8 +341,6 @@ public class ClientController{
         }
 
         winningPlayer = gameBoardView.checkTiles();
-        System.out.println(clickCounter);
-        System.out.println(winningPlayer);
 
         if (winningPlayer && yourTurn){
             System.out.println(currUser.getUsername() + "JAG VANN!!");
@@ -360,9 +397,6 @@ public class ClientController{
     public void opponentConnected(User opponentUser){
         currOpponent = opponentUser;
 
-        System.out.println("curent user: " + currUser.getPlayer());
-        System.out.println("opponent: " + opponentUser.getPlayer());
-
         if (currUser.getPlayer() == 1){
             yourTurn = true;
             gameBoardView.setPlayerX(currUser.getUsername(), "*");
@@ -377,9 +411,14 @@ public class ClientController{
         clickOnTile();
     }
 
-    public void test(String test){
-        Platform.runLater(() -> loadingView.testConnected(test));
+    public void clearHighscoreList(){
+        highscoreList.clear();
     }
+
+    public void addToHighscoreList(User user){
+        highscoreList.add(user);
+    }
+
 
     public void setConnectedToServer(boolean connected){
         connectedToServer = connected;

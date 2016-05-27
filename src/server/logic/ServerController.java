@@ -2,6 +2,8 @@ package server.logic;
 
 import server.datamodel.User;
 
+import java.util.List;
+
 /**
  * Created by Jonas on 2016-05-19.
  */
@@ -25,5 +27,8 @@ public class ServerController {
         dbc.updateUser(user);
     }
 
+    public List<User> getHighscore(){
+        return dbc.getHighscore();
+    }
 
 }

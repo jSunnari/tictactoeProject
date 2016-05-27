@@ -70,4 +70,8 @@ public class DatabaseConnection {
         etx.commit();
     }
 
+    public List<User> getHighscore(){
+        return em.createNamedQuery("getHighscore").setMaxResults(10).getResultList();
+    }
+
 }

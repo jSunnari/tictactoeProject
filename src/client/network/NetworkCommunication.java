@@ -93,6 +93,16 @@ public class NetworkCommunication implements Runnable {
                 clientController.createAccountResponse("created", "User has been created!");
                 break;
 
+            case "getHighscore":
+                User[] highscoreList = gson.fromJson(cmdData.get(0), User[].class);
+
+                clientController.clearHighscoreList();
+
+                for (User highScoreUser : highscoreList){
+                    clientController.addToHighscoreList(highScoreUser);
+                }
+                break;
+
             /**
              * GAME COMMANDS:
              */
@@ -126,9 +136,8 @@ public class NetworkCommunication implements Runnable {
                 clientController.setScore(winningPlayer);
                 break;
 
-            case "endGame":
-                loginUser = gson.fromJson(cmdData.get(0), User.class);
-                clientController.setCurrentUser(loginUser);
+            case "opponentStoppedGame":
+                clientController.opponentStoppedGame();
                 break;
 
         }

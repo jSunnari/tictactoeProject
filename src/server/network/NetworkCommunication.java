@@ -143,6 +143,10 @@ public class NetworkCommunication implements Runnable{
                 serverController.updateUser(updateUser);
                 break;
 
+            case "getHighscore":
+                send("getHighscore", serverController.getHighscore());
+                break;
+
             /**
              * GAME-COMMANDS - the gamecontroller will take care of these: **
              */
@@ -153,7 +157,14 @@ public class NetworkCommunication implements Runnable{
                 gameCommunication.connectPlayers(connectPlayers);
                 break;
 
+            case "removeFromGameList":
+                //Remove the user from gamecontroller:
+                gameCommunication.removePlayer(currUser);
+                break;
+
             case "stopGame":
+                User opponentUser = gson.fromJson(cmdData.get(0), User.class);
+                gameCommunication.updateClient("opponentStoppedGame", opponentUser.getUsername());
                 //Remove the user from gamecontroller:
                 gameCommunication.removePlayer(currUser);
                 break;
@@ -169,15 +180,16 @@ public class NetworkCommunication implements Runnable{
 
             case "resetGame":
                 User opponent = gson.fromJson(cmdData.get(0), User.class);
-
                 gameCommunication.updateClient("resetGame", opponent.getUsername());
                 send("resetGame", "");
                 break;
 
             case "winningPlayer":
-                User opponentUser = gson.fromJson(cmdData.get(0), User.class);
+                User opponentPlayer = gson.fromJson(cmdData.get(0), User.class);
                 send("winningPlayer", currUser);
-                gameCommunication.updateClient("winningPlayer", opponentUser.getUsername(), currUser);
+                gameCommunication.updateClient("winningPlayer", opponentPlayer.getUsername(), currUser);
+                break;
+
         }
     }
 

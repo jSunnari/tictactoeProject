@@ -107,6 +107,7 @@ public class GameController {
         for (ConnectPlayers player : connectPlayers){
             if (user.getUsername().equals(player.getUser().getUsername())){
                 connectPlayers.remove(player);
+                counter = 0;
                 break;
             }
         }

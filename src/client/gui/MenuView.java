@@ -34,6 +34,10 @@ public class MenuView extends VBox{
         play.setOnMouseClicked(listener);
     }
 
+    public void resultMenuListener(EventHandler<MouseEvent> listener){
+        results.setOnMouseClicked(listener);
+    }
+
     public void settingsMenuListener (EventHandler<MouseEvent> listener){
         settings.setOnMouseClicked(listener);
     }
