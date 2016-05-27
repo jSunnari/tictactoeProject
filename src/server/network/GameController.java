@@ -50,9 +50,6 @@ public class GameController {
             User player2 = connectPlayers.get(connectPlayers.size()-1).getUser();
             player2.setPlayer(2);
 
-            System.out.println("player1 " + player1.getPlayer());
-            System.out.println("player2 " + player2.getPlayer());
-
             connectPlayers.get(connectPlayers.size()-2).getNetworkCommunication().send("setPlayer1", player1);
             connectPlayers.get(connectPlayers.size()-1).getNetworkCommunication().send("setPlayer2", player2);
 
@@ -107,6 +104,7 @@ public class GameController {
         for (ConnectPlayers player : connectPlayers){
             if (user.getUsername().equals(player.getUser().getUsername())){
                 connectPlayers.remove(player);
+                counter = 0;
                 break;
             }
         }

@@ -10,6 +10,8 @@ import client.gui.*;
 import client.network.NetworkCommunication;
 import client.network.NetworkConnection;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * Created by Jonas on 2016-05-20.
@@ -26,6 +28,7 @@ public class ClientController{
     private GameBoardJavafxView.Tile[][] board;
     private boolean yourTurn = false;
     private int clickCounter = 0;
+    private ObservableList<User> highscoreList = FXCollections.observableArrayList();
 
     //VIEWS:
     private MainView mainView;
@@ -36,12 +39,14 @@ public class ClientController{
     private UserdetailsView updateAccount = new UserdetailsView();
     private LoadingView loadingView = new LoadingView();
     private GameBoardJavafxView gameBoardView = new GameBoardJavafxView();
+    private ResultView resultView = new ResultView();
 
     //Gets the mainview and loginform from ClientApp-class (main-class).
     public ClientController(MainView mainView, LoginView loginView) {
         this.mainView = mainView;
         this.loginView = loginView;
 
+        //Connect to server:
         connect();
 
         /**
@@ -72,7 +77,10 @@ public class ClientController{
         /**
          * MenuView, Listeners:
          */
+        //PLAY - call method play();
         menuView.playMenuListener(event -> play());
+
+        menuView.resultMenuListener(event -> updateResults());
 
         //LOGOUT - calls method logout();
         menuView.logoutMenuListener(event -> logout());
@@ -90,12 +98,26 @@ public class ClientController{
         settingsView.backBtnListener(event -> mainView.setMainContent(loginView));
 
         /**
+         * LoadingView, Listeners:
+         */
+        //CANCEL - calls method cancelGame();
+        loadingView.cancelButtonListener(event -> cancelGame());
+
+        /**
          * GameBoardView, Listeners:
          */
-
+        //RESET GAME - sends a command to server.
         gameBoardView.resetGameListener(event -> networkCommunication.send("resetGame", currOpponent));
 
-        gameBoardView.exitGameListener(event -> networkCommunication.send("endGame", currOpponent));
+        //EXIT GAME - calls method stoppedGame();
+        gameBoardView.exitGameListener(event -> stoppedGame());
+
+        /**
+         * ResultView, Listeners:
+         */
+        //BACK - switch view to main-menu.
+        resultView.backBtnListener(event -> mainView.setMainContent(menuView));
+
     }
 
     void connect(){
@@ -178,9 +200,15 @@ public class ClientController{
         currUser = null;
     }
 
+    void updateResults(){
+        networkCommunication.send("getHighscore", "");
+        resultView.setHighscoreList(highscoreList);
+        resultView.setCurrentUser(currUser);
+        Platform.runLater(() -> mainView.setMainContent(resultView));
+    }
+
     /**
      * Create account-method,
-     *
      */
     void createAccount() {
         String username = userdetailsView.getUsername();
@@ -238,15 +266,28 @@ public class ClientController{
         networkCommunication.send("startGame", "");
     }
 
+    void cancelGame(){
+        networkCommunication.send("removeFromGameList", "");
+        mainView.setMainContent(menuView);
+    }
+
+    void stoppedGame(){
+        networkCommunication.send("updateUser", currUser);
+        networkCommunication.send("stopGame", currOpponent);
+        cancelGame();
+    }
+
+    public void opponentStoppedGame(){
+        networkCommunication.send("updateUser", currUser);
+        networkCommunication.send("removeFromGameList", "");
+        Platform.runLater(() -> mainView.setMainContent(menuView));
+    }
+
     public void resetGame(){
         clickCounter = 0;
         //gameBoardView.checkForTie();
         gameBoardView.setPlayable(true);
         gameBoardView.resetBoard();
-    }
-
-    public void endGame(){
-        gameBoardView.endGame();
     }
 
     void clickOnTile(){
@@ -279,9 +320,15 @@ public class ClientController{
         networkCommunication.send("markerData", markerData);
     }
 
+    /**
+     * Method for drawing a marker - (X or O):
+     * @param markerData = markerdata including tile-id (1 to 9), opponentdata and if it is an O or X.
+     */
     public void drawMarker(MarkerData markerData){
+        //Boolean holding the winning player:
         boolean winningPlayer;
-        //Looping through our tiles in the board
+
+        //Looping through our tiles in the board until finding the right "tile" to draw on:
         for(int i = 0; i < 3; i++ ){
             for(int j = 0; j < 3; j++){
                 if (board[j][i].getTileId() == markerData.getMarkerId()){
@@ -301,12 +348,17 @@ public class ClientController{
             }
         }
 
+        //Checking if there is a winning player after each draw:
         winningPlayer = gameBoardView.checkTiles();
-        System.out.println(clickCounter);
-        System.out.println(winningPlayer);
 
+        /**
+         * If there is a winning player and it's the current users turn,
+         * that means that the current user has won the round.
+         * else its the opponent who won the round.
+         * If there is no winning player and the clickcounter i 9,
+         * that means that there is a tie game.
+         */
         if (winningPlayer && yourTurn){
-            System.out.println(currUser.getUsername() + "JAG VANN!!");
             networkCommunication.send("winningPlayer", currOpponent);
             currUser.setWonMatches(currUser.getWonMatches()+1);
         }
@@ -318,6 +370,9 @@ public class ClientController{
             gameBoardView.incTieScore();
         }
 
+        /**
+         * Method that checks whos turn it is and changed the gameboard-marker beside the playername.
+         */
         if (yourTurn){
             yourTurn = false;
 
@@ -330,7 +385,6 @@ public class ClientController{
                 gameBoardView.setPlayerO(currUser.getUsername(), "");
                 gameBoardView.setPlayerX(currOpponent.getUsername(), "*");
             }
-
         }
         else{
             yourTurn = true;
@@ -346,22 +400,26 @@ public class ClientController{
         }
     }
 
+    /**
+     * Sets the "local" score to the winning player of the round:
+     * @param winningPlayer = player who won round.
+     */
     public void setScore(User winningPlayer){
-        //ifall personen winner.
+
         if (winningPlayer.getPlayer() == 1){
             gameBoardView.incPlayer1Score();
         }
         else if(winningPlayer.getPlayer() == 2) {
             gameBoardView.incPlayer2Score();
         }
-
     }
 
+    /**
+     * When an opponent has connected, the game will start:
+     * @param opponentUser = the opponent player.
+     */
     public void opponentConnected(User opponentUser){
         currOpponent = opponentUser;
-
-        System.out.println("curent user: " + currUser.getPlayer());
-        System.out.println("opponent: " + opponentUser.getPlayer());
 
         if (currUser.getPlayer() == 1){
             yourTurn = true;
@@ -377,10 +435,25 @@ public class ClientController{
         clickOnTile();
     }
 
-    public void test(String test){
-        Platform.runLater(() -> loadingView.testConnected(test));
+    /**
+     * Clear the highscore-list:
+     */
+    public void clearHighscoreList(){
+        highscoreList.clear();
     }
 
+    /**
+     * Add to the highscore-list:
+     * @param user = user (including scores).
+     */
+    public void addToHighscoreList(User user){
+        highscoreList.add(user);
+    }
+
+    /**
+     * Sets if connected or not.
+     * @param connected
+     */
     public void setConnectedToServer(boolean connected){
         connectedToServer = connected;
     }

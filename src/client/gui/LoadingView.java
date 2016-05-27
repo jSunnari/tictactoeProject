@@ -2,10 +2,11 @@ package client.gui;
 
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -18,8 +19,8 @@ import javafx.util.Duration;
 public class LoadingView extends VBox {
     private RotateTransition rotateTransition;
     private VBox vBox;
+    private Button cancelButton = new Button("Cancel");
     private Label loadingLabel = new Label("Waiting for random opponent...");
-    private Label test = new Label();
 
     public LoadingView() {
         vBox = this;
@@ -32,12 +33,18 @@ public class LoadingView extends VBox {
 
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(5);
-        vBox.getChildren().addAll(loadingCircle, loadingLabel, test);
+        vBox.getChildren().addAll(loadingCircle, loadingLabel, cancelButton);
+
+        cancelButton.getStyleClass().add("form-button");
 
         rotateTransition = new RotateTransition(Duration.seconds(6), loadingCircle);
         rotateTransition.setByAngle(180);
         rotateTransition.setCycleCount(Timeline.INDEFINITE);
         rotateTransition.setAutoReverse(true);
+    }
+
+    public void cancelButtonListener(EventHandler<ActionEvent> buttonListener){
+        cancelButton.setOnAction(buttonListener);
     }
 
     public void play() {
@@ -46,14 +53,6 @@ public class LoadingView extends VBox {
 
     public void stop() {
         rotateTransition.stop();
-    }
-
-    public void testConnected(String opponent){
-        test.setText(opponent + " has joined the game");
-    }
-
-    public void testListener(EventHandler<MouseEvent> listener){
-        test.setOnMouseClicked(listener);
     }
 
 }

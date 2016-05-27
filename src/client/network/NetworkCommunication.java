@@ -80,59 +80,79 @@ public class NetworkCommunication implements Runnable {
          * Depending on what command comes through the stream:
          */
         switch (currMessage.getCommand()) {
+
+            //login:
             case "login":
                 User loginUser = gson.fromJson(cmdData.get(0), User.class);
                 clientController.setCurrentUser(loginUser);
                 break;
 
+            //If a user already exists:
             case "userExists":
                 clientController.createAccountResponse("error", "Username already exists.");
                 break;
 
+            //Confirmation that a user has been created:
             case "userCreated":
                 clientController.createAccountResponse("created", "User has been created!");
+                break;
+
+            //Get the highscore-list:
+            case "getHighscore":
+                User[] highscoreList = gson.fromJson(cmdData.get(0), User[].class);
+
+                clientController.clearHighscoreList();
+
+                for (User highScoreUser : highscoreList){
+                    clientController.addToHighscoreList(highScoreUser);
+                }
                 break;
 
             /**
              * GAME COMMANDS:
              */
+            //Start a game:
             case "startGame":
                 User opponentUser = gson.fromJson(cmdData.get(0), User.class);
                 clientController.opponentConnected(opponentUser);
                 break;
 
+            //Draw a marker - (X or O):
             case "drawMarker":
                 MarkerData markerData = gson.fromJson(cmdData.get(0), MarkerData.class);
                 clientController.drawMarker(markerData);
                 break;
 
+            //Set player1:
             case "setPlayer1":
                 User player1 = gson.fromJson(cmdData.get(0), User.class);
                 clientController.setCurrentUser(player1);
                 break;
 
+            //Set player2:
             case "setPlayer2":
                 User player2 = gson.fromJson(cmdData.get(0), User.class);
                 clientController.setCurrentUser(player2);
                 break;
 
+            //Resets the game, someone pressed play again:
             case "resetGame":
                 clientController.resetGame();
                 break;
 
+            //The winning player of a round:
             case "winningPlayer":
                 User winningPlayer = gson.fromJson(cmdData.get(0), User.class);
                 System.out.println(winningPlayer.getPlayer());
                 clientController.setScore(winningPlayer);
                 break;
 
-            case "endGame":
-                loginUser = gson.fromJson(cmdData.get(0), User.class);
-                clientController.setCurrentUser(loginUser);
+            //If an opponent stopped a game (exited):
+            case "opponentStoppedGame":
+                clientController.opponentStoppedGame();
                 break;
 
         }
-
     }
 
     /**

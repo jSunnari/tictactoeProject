@@ -14,6 +14,9 @@ import javax.persistence.*;
         @NamedQuery(
                 name = "getAllStudents",
                 query = "SELECT c FROM User c"),
+        @NamedQuery(
+                name = "getHighscore",
+                query = "SELECT c FROM User c ORDER BY c.rank"),
 })
 public class User {
 
