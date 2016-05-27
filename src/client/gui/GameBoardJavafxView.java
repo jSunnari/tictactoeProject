@@ -22,7 +22,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameBoardJavafxView extends Pane {
+public class GameBoardJavafxView extends VBox {
 
     private boolean playable = true;
     private boolean turnX = true;
@@ -67,15 +67,17 @@ public class GameBoardJavafxView extends Pane {
     private VBox gameVBox = new VBox();
 
     public GameBoardJavafxView(){
-        root = this;
+        gameVBox = this;
         p1Vbox.getStyleClass().add("playerScoreVBoxes");
         p2Vbox.getStyleClass().add("playerScoreVBoxes");
         tieVbox.getStyleClass().add("playerScoreVBoxes");
         resetBut.getStyleClass().add("form-button");
-        root.getStyleClass().add("gameboard-pane");
+        //root.getStyleClass().add("gameboard-pane");
         showTurn();
+
+        gameVBox.setAlignment(Pos.CENTER);
+
         gameVBox.getChildren().addAll(createContent(), scoreBoardHbox);
-        root.getChildren().add(gameVBox);
     }
 
     private Parent createContent() {
