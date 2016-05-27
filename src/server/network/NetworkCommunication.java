@@ -173,6 +173,11 @@ public class NetworkCommunication implements Runnable{
                 gameCommunication.updateClient("resetGame", opponent.getUsername());
                 send("resetGame", "");
                 break;
+
+            case "winningPlayer":
+                User opponentUser = gson.fromJson(cmdData.get(0), User.class);
+                send("winningPlayer", currUser);
+                gameCommunication.updateClient("winningPlayer", opponentUser.getUsername(), currUser);
         }
     }
 

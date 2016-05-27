@@ -16,17 +16,20 @@ import javafx.application.Platform;
  */
 
 public class ClientController{
-    private MainView mainView;
-    private LoginView loginView;
     private NetworkConnection networkConnection;
     private NetworkCommunication networkCommunication;
+    private boolean connectedToServer = false;
+
+    //GAME VARIABLES:
     private User currUser;
     private User currOpponent;
-    private boolean connectedToServer = false;
     private GameBoardJavafxView.Tile[][] board;
     private boolean yourTurn = false;
+    private int clickCounter = 0;
 
     //VIEWS:
+    private MainView mainView;
+    private LoginView loginView;
     private UserdetailsView userdetailsView = new UserdetailsView();
     private MenuView menuView = new MenuView();
     private SettingsView settingsView = new SettingsView();
@@ -236,7 +239,8 @@ public class ClientController{
     }
 
     public void resetGame(){
-        gameBoardView.checkForTie();
+        clickCounter = 0;
+        //gameBoardView.checkForTie();
         gameBoardView.setPlayable(true);
         gameBoardView.resetBoard();
     }
@@ -250,8 +254,6 @@ public class ClientController{
                 GameBoardJavafxView.Tile currentTile = board[j][i];
                 currentTile.setOnMouseClicked(event -> {
                     if (gameBoardView.isPlayable()) {
-
-                        System.out.println(currentTile.getValue());
 
                         if (yourTurn && !(currentTile.getValue().equals("X") || currentTile.getValue().equals("O"))) {
                             sendMarkerData(currentTile);
@@ -274,6 +276,7 @@ public class ClientController{
     }
 
     public void drawMarker(MarkerData markerData){
+        boolean winningPlayer;
         //Looping through our tiles in the board
         for(int i = 0; i < 3; i++ ){
             for(int j = 0; j < 3; j++){
@@ -281,34 +284,47 @@ public class ClientController{
 
                     if (markerData.getMarkerType().equals("X")){
                         board[j][i].drawX();
-                        System.out.println("value x: " + board[j][i].getValue());
+                        clickCounter++;
                         clickOnTile();
 
                     }
                     else if (markerData.getMarkerType().equals("O")){
                         board[j][i].drawO();
-                        System.out.println("value o: " + board[j][i].getValue());
+                        clickCounter++;
                         clickOnTile();
-
                     }
-
                 }
             }
         }
 
-        gameBoardView.checkTiles();
+        winningPlayer = gameBoardView.checkTiles();
+        System.out.println(clickCounter);
+        System.out.println(winningPlayer);
+
+        if (winningPlayer && yourTurn){
+            System.out.println(currUser.getUsername() + "JAG VANN!!");
+            networkCommunication.send("winningPlayer", currOpponent);
+            currUser.setWonMatches(currUser.getWonMatches()+1);
+        }
+        else if(winningPlayer && !yourTurn){
+            currUser.setLostMatches(currUser.getLostMatches()+1);
+        }
+        else if(!winningPlayer && clickCounter == 9){
+            currUser.setTieMatches(currUser.getTieMatches()+1);
+            gameBoardView.incTieScore();
+        }
 
         if (yourTurn){
             yourTurn = false;
 
             if (currUser.getPlayer() == 1){
-                gameBoardView.setPlayerX(currUser.getUsername());
-                gameBoardView.setPlayerO(currOpponent.getUsername() + "*");
+                gameBoardView.setPlayerX(currUser.getUsername(), "");
+                gameBoardView.setPlayerO(currOpponent.getUsername(), "*");
 
             }
             else if(currUser.getPlayer() == 2) {
-                gameBoardView.setPlayerO(currUser.getUsername());
-                gameBoardView.setPlayerX(currOpponent.getUsername() + "*");
+                gameBoardView.setPlayerO(currUser.getUsername(), "");
+                gameBoardView.setPlayerX(currOpponent.getUsername(), "*");
             }
 
         }
@@ -316,14 +332,25 @@ public class ClientController{
             yourTurn = true;
 
             if (currUser.getPlayer() == 1){
-                gameBoardView.setPlayerX(currUser.getUsername() + "*");
-                gameBoardView.setPlayerO(currOpponent.getUsername());
+                gameBoardView.setPlayerX(currUser.getUsername(), "*");
+                gameBoardView.setPlayerO(currOpponent.getUsername(), "");
             }
             else if(currUser.getPlayer() == 2) {
-                gameBoardView.setPlayerO(currUser.getUsername() + "*");
-                gameBoardView.setPlayerX(currOpponent.getUsername());
+                gameBoardView.setPlayerO(currUser.getUsername(), "*");
+                gameBoardView.setPlayerX(currOpponent.getUsername(), "");
             }
         }
+    }
+
+    public void setScore(User winningPlayer){
+        //ifall personen winner.
+        if (winningPlayer.getPlayer() == 1){
+            gameBoardView.incPlayer1Score();
+        }
+        else if(winningPlayer.getPlayer() == 2) {
+            gameBoardView.incPlayer2Score();
+        }
+
     }
 
     public void opponentConnected(User opponentUser){
@@ -334,12 +361,12 @@ public class ClientController{
 
         if (currUser.getPlayer() == 1){
             yourTurn = true;
-            gameBoardView.setPlayerX(currUser.getUsername() + "*");
-            gameBoardView.setPlayerO(opponentUser.getUsername());
+            gameBoardView.setPlayerX(currUser.getUsername(), "*");
+            gameBoardView.setPlayerO(opponentUser.getUsername(), "");
         }
         else if(currUser.getPlayer() == 2) {
-            gameBoardView.setPlayerO(currUser.getUsername());
-            gameBoardView.setPlayerX(opponentUser.getUsername() + "*");
+            gameBoardView.setPlayerO(currUser.getUsername(), "");
+            gameBoardView.setPlayerX(opponentUser.getUsername(), "*");
         }
 
         Platform.runLater(() -> mainView.setMainContent(gameBoardView));
