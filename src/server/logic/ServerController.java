@@ -24,6 +24,11 @@ public class ServerController {
     }
 
     public void updateUser(User user){
+        int wonMatches = user.getWonMatches();
+        int tieMatches = user.getTieMatches();
+
+        int score = (wonMatches*3) + tieMatches;
+        user.setRank(score);
         dbc.updateUser(user);
     }
 

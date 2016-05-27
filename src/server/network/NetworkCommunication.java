@@ -104,6 +104,7 @@ public class NetworkCommunication implements Runnable{
          */
         switch (currMessage.getCommand()) {
 
+            //Login:
             case "login":
                 //Get the userobject from the client containing only a username and password,
                 User loginAttempt = gson.fromJson(cmdData.get(0), User.class);
@@ -125,6 +126,7 @@ public class NetworkCommunication implements Runnable{
                 }
                 break;
 
+            //Create a user:
             case "createUser":
                 User createUserAttempt = gson.fromJson(cmdData.get(0), User.class);
 
@@ -137,12 +139,13 @@ public class NetworkCommunication implements Runnable{
                 }
                 break;
 
+            //Update a user:
             case "updateUser":
                 User updateUser = gson.fromJson(cmdData.get(0), User.class);
-
                 serverController.updateUser(updateUser);
                 break;
 
+            //Get highscore-list:
             case "getHighscore":
                 send("getHighscore", serverController.getHighscore());
                 break;
@@ -150,6 +153,7 @@ public class NetworkCommunication implements Runnable{
             /**
              * GAME-COMMANDS - the gamecontroller will take care of these: **
              */
+            //Start a game, add to playerlist:
             case "startGame":
                 //Create a "ConnectPlayers"-object with current user:
                 connectPlayers = new ConnectPlayers(currUser, this);
@@ -157,11 +161,13 @@ public class NetworkCommunication implements Runnable{
                 gameCommunication.connectPlayers(connectPlayers);
                 break;
 
+            //Remove a player from the playerlist:
             case "removeFromGameList":
                 //Remove the user from gamecontroller:
                 gameCommunication.removePlayer(currUser);
                 break;
 
+            //Player who stoppes a game, sends a command to the opponent and removes the user from the playerlist:
             case "stopGame":
                 User opponentUser = gson.fromJson(cmdData.get(0), User.class);
                 gameCommunication.updateClient("opponentStoppedGame", opponentUser.getUsername());
@@ -169,21 +175,23 @@ public class NetworkCommunication implements Runnable{
                 gameCommunication.removePlayer(currUser);
                 break;
 
+            //Get marker data and send to client:
             case "markerData":
                 MarkerData markerData = gson.fromJson(cmdData.get(0), MarkerData.class);
-                System.out.println(markerData.getMarkerId());
                 //Find opponent and send data:
                 gameCommunication.updateClient("drawMarker", markerData.getOpponentUsername(), markerData);
                 //Send back data to player:
                 send("drawMarker", markerData);
                 break;
 
+            //Reset again - (play again):
             case "resetGame":
                 User opponent = gson.fromJson(cmdData.get(0), User.class);
                 gameCommunication.updateClient("resetGame", opponent.getUsername());
                 send("resetGame", "");
                 break;
 
+            //The player who wins the round:
             case "winningPlayer":
                 User opponentPlayer = gson.fromJson(cmdData.get(0), User.class);
                 send("winningPlayer", currUser);

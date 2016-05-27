@@ -46,6 +46,7 @@ public class ClientController{
         this.mainView = mainView;
         this.loginView = loginView;
 
+        //Connect to server:
         connect();
 
         /**
@@ -99,6 +100,7 @@ public class ClientController{
         /**
          * LoadingView, Listeners:
          */
+        //CANCEL - calls method cancelGame();
         loadingView.cancelButtonListener(event -> cancelGame());
 
         /**
@@ -107,6 +109,7 @@ public class ClientController{
         //RESET GAME - sends a command to server.
         gameBoardView.resetGameListener(event -> networkCommunication.send("resetGame", currOpponent));
 
+        //EXIT GAME - calls method stoppedGame();
         gameBoardView.exitGameListener(event -> stoppedGame());
 
         /**
@@ -206,7 +209,6 @@ public class ClientController{
 
     /**
      * Create account-method,
-     *
      */
     void createAccount() {
         String username = userdetailsView.getUsername();
@@ -318,9 +320,15 @@ public class ClientController{
         networkCommunication.send("markerData", markerData);
     }
 
+    /**
+     * Method for drawing a marker - (X or O):
+     * @param markerData = markerdata including tile-id (1 to 9), opponentdata and if it is an O or X.
+     */
     public void drawMarker(MarkerData markerData){
+        //Boolean holding the winning player:
         boolean winningPlayer;
-        //Looping through our tiles in the board
+
+        //Looping through our tiles in the board until finding the right "tile" to draw on:
         for(int i = 0; i < 3; i++ ){
             for(int j = 0; j < 3; j++){
                 if (board[j][i].getTileId() == markerData.getMarkerId()){
@@ -340,10 +348,17 @@ public class ClientController{
             }
         }
 
+        //Checking if there is a winning player after each draw:
         winningPlayer = gameBoardView.checkTiles();
 
+        /**
+         * If there is a winning player and it's the current users turn,
+         * that means that the current user has won the round.
+         * else its the opponent who won the round.
+         * If there is no winning player and the clickcounter i 9,
+         * that means that there is a tie game.
+         */
         if (winningPlayer && yourTurn){
-            System.out.println(currUser.getUsername() + "JAG VANN!!");
             networkCommunication.send("winningPlayer", currOpponent);
             currUser.setWonMatches(currUser.getWonMatches()+1);
         }
@@ -355,6 +370,9 @@ public class ClientController{
             gameBoardView.incTieScore();
         }
 
+        /**
+         * Method that checks whos turn it is and changed the gameboard-marker beside the playername.
+         */
         if (yourTurn){
             yourTurn = false;
 
@@ -367,7 +385,6 @@ public class ClientController{
                 gameBoardView.setPlayerO(currUser.getUsername(), "");
                 gameBoardView.setPlayerX(currOpponent.getUsername(), "*");
             }
-
         }
         else{
             yourTurn = true;
@@ -383,17 +400,24 @@ public class ClientController{
         }
     }
 
+    /**
+     * Sets the "local" score to the winning player of the round:
+     * @param winningPlayer = player who won round.
+     */
     public void setScore(User winningPlayer){
-        //ifall personen winner.
+
         if (winningPlayer.getPlayer() == 1){
             gameBoardView.incPlayer1Score();
         }
         else if(winningPlayer.getPlayer() == 2) {
             gameBoardView.incPlayer2Score();
         }
-
     }
 
+    /**
+     * When an opponent has connected, the game will start:
+     * @param opponentUser = the opponent player.
+     */
     public void opponentConnected(User opponentUser){
         currOpponent = opponentUser;
 
@@ -411,15 +435,25 @@ public class ClientController{
         clickOnTile();
     }
 
+    /**
+     * Clear the highscore-list:
+     */
     public void clearHighscoreList(){
         highscoreList.clear();
     }
 
+    /**
+     * Add to the highscore-list:
+     * @param user = user (including scores).
+     */
     public void addToHighscoreList(User user){
         highscoreList.add(user);
     }
 
-
+    /**
+     * Sets if connected or not.
+     * @param connected
+     */
     public void setConnectedToServer(boolean connected){
         connectedToServer = connected;
     }
