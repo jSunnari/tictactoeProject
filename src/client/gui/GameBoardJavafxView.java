@@ -78,7 +78,6 @@ public class GameBoardJavafxView extends VBox {
         gameVBox.setAlignment(Pos.CENTER);
 
         gameVBox.getChildren().addAll(createContent(), scoreBoardHbox);
-
     }
 
     private Parent createContent() {
