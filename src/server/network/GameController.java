@@ -83,6 +83,14 @@ public class GameController {
         }
     }
 
+    public void updateClient(String command, String opponentPlayer, User winningPlayer){
+        for (ConnectPlayers player : connectPlayers){
+            if (opponentPlayer.equals(player.getUser().getUsername())) {
+                player.getNetworkCommunication().send(command, winningPlayer);
+            }
+        }
+    }
+
     public void updateClient(String command, String user){
         for (ConnectPlayers player : connectPlayers){
             if (user.equals(player.getUser().getUsername())) {

@@ -41,23 +41,22 @@ public class GameBoardJavafxView extends VBox {
     private Image circleImg = new Image("file:src/client/res/circleWhite.png");
     private FadeTransition fadeTransition;
     private Pane gameBoard = new Pane();
-    private Pane root;
     private String playerX = " (X)";
     private String playerO = " (O)";
     private String p1Name = "";
     private String p2Name = "";
     private String tieName = "Ties";
-    private String p1Score = "0";
-    private String p2Score = "0";
-    private String tieScore = "0";
+    private int p1Score = 0;
+    private int p2Score = 0;
+    private int tieScore = 0;
     private String turn = "*";
     //Components for scoreboard
     private Label p1NameLbl = new Label();
     private Label p2NameLbl = new Label();
     private Label tieNameLbl = new Label(tieName);
-    private Label p1ScoreLbl = new Label(p1Score);
-    private Label p2ScoreLbl = new Label(p2Score);
-    private Label tieScoreLbl = new Label(tieScore);
+    private Label p1ScoreLbl = new Label("0");
+    private Label p2ScoreLbl = new Label("0");
+    private Label tieScoreLbl = new Label("0");
     //Layout boxes for the scoreboard
     private Button resetBut = new Button("PLAY AGAIN!!");
     private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
@@ -72,8 +71,6 @@ public class GameBoardJavafxView extends VBox {
         p2Vbox.getStyleClass().add("playerScoreVBoxes");
         tieVbox.getStyleClass().add("playerScoreVBoxes");
         resetBut.getStyleClass().add("form-button");
-        //root.getStyleClass().add("gameboard-pane");
-        showTurn();
 
         gameVBox.setAlignment(Pos.CENTER);
 
@@ -129,15 +126,18 @@ public class GameBoardJavafxView extends VBox {
         this.playable = playable;
     }
 
-    public void checkTiles() {
+    public boolean checkTiles() {
+        boolean winningPlayer = false;
         for (Combo combo : combos) {
             if (combo.isComplete()) {
+                winningPlayer = true;
                 playable = false;
                 playWinAnimation(combo);
-                checkForTie();
+                //checkForTie();
                 break;
             }
         }
+        return winningPlayer;
     }
 
     public void resetBoard(){
@@ -163,17 +163,27 @@ public class GameBoardJavafxView extends VBox {
                 fadeTransition.setAutoReverse(true);
                 fadeTransition.play();
             }
+        });
+    }
 
-            if(!turnX){
-                int p1CurrScore = Integer.parseInt(p1ScoreLbl.getText());
-                p1CurrScore = p1CurrScore + 1;
-                p1ScoreLbl.setText(Integer.toString(p1CurrScore));
-            }
-            else if(turnX){
-                int p2CurrScore = Integer.parseInt(p2ScoreLbl.getText());
-                p2CurrScore = p2CurrScore + 1;
-                p2ScoreLbl.setText(Integer.toString(p2CurrScore));
-            }
+    public void incPlayer1Score(){
+        Platform.runLater(() -> {
+            p1Score++;
+            p1ScoreLbl.setText(String.valueOf(p1Score));
+        });
+    }
+
+    public void incPlayer2Score(){
+        Platform.runLater(() ->{
+            p2Score++;
+            p2ScoreLbl.setText(String.valueOf(p2Score));
+        });
+    }
+
+    public void incTieScore(){
+        Platform.runLater(() ->{
+            tieScore++;
+            tieScoreLbl.setText(String.valueOf(tieScore));
         });
     }
 
@@ -263,7 +273,7 @@ public class GameBoardJavafxView extends VBox {
     public Tile[][] getBoard(){
         return board;
     }
-
+/*
     public void checkForTie(){
         //The tieCounter counts the number of pieces are out on the board and checks if the game has not been won by anyone. Then it's a tie
         if(tieCounter == 9 && playable){
@@ -277,45 +287,23 @@ public class GameBoardJavafxView extends VBox {
         tieCounter = 0;
         gameTie = false;
     }
-
-    public void showTurn(){
-        Platform.runLater(() -> {
-            //Check if the playerLbl contains the char *, remove and add to other player if it does
-            if(turnX){
-                p2NameLbl.setText(p2Name + playerO);
-                String changeTurn = p1NameLbl.getText();
-                if(changeTurn.contains(turn)){
-                    p1NameLbl.setText(p1Name + playerX);
-                }else {
-                    p1NameLbl.setText(changeTurn + turn);
-                }
-            }else{
-                p1NameLbl.setText(p1Name + playerX);
-                String changeTurn = p2NameLbl.getText();
-                if(changeTurn.contains(turn)){
-                    p2NameLbl.setText(p2Name + playerO);
-                }else {
-                    p2NameLbl.setText(changeTurn + turn);
-                }
-            }
-        });
-    }
+    */
 
     public boolean isPlayable() {
         return playable;
     }
 
-    public void setPlayerX(String name){
+    public void setPlayerX(String name, String turn){
         Platform.runLater(() -> {
             p1Name = name;
-            p1NameLbl.setText(p1Name + playerX);
+            p1NameLbl.setText(p1Name + playerX + turn);
         });
     }
 
-    public void setPlayerO(String name){
+    public void setPlayerO(String name, String turn){
         Platform.runLater(() -> {
             p2Name = name;
-            p2NameLbl.setText(p2Name + playerO);
+            p2NameLbl.setText(p2Name + playerO + turn);
         });
     }
 

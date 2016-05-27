@@ -120,6 +120,12 @@ public class NetworkCommunication implements Runnable {
                 clientController.resetGame();
                 break;
 
+            case "winningPlayer":
+                User winningPlayer = gson.fromJson(cmdData.get(0), User.class);
+                System.out.println(winningPlayer.getPlayer());
+                clientController.setScore(winningPlayer);
+                break;
+
         }
 
     }
