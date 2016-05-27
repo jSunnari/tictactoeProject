@@ -71,6 +71,7 @@ public class ClientController{
         userdetailsView.createAccountBtn(event -> createAccount());
 
         //BACK - switches to the loginform again.
+        userdetailsView.backBtnListener(event -> resetValidation());
         userdetailsView.backBtnListener(event -> mainView.setMainContent(loginView));
         updateAccount.backBtnListener(event -> mainView.setMainContent(menuView));
 
@@ -222,6 +223,10 @@ public class ClientController{
         else{
             Platform.runLater(() -> userdetailsView.setValidationLabel("error", "Enter all fields."));
         }
+    }
+
+    void resetValidation(){
+        Platform.runLater(() -> userdetailsView.setValidationLabel("back", ""));
     }
 
     /**
