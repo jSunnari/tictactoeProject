@@ -2,7 +2,6 @@ package client.gui;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,8 +12,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.media.AudioClip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -40,7 +41,7 @@ public class GameBoardJavafxView extends HBox {
     private Image crossImg = new Image("file:src/client/res/crossWhite.png");
     private Image circleImg = new Image("file:src/client/res/circleWhite.png");
     private FadeTransition fadeTransition;
-    private AudioClip crossAudio = new AudioClip("");
+    //private AudioClip crossAudio = new AudioClip("");
     //Scoreboard components
     private String playerX = " (X)";
     private String playerO = " (O)";
@@ -80,6 +81,9 @@ public class GameBoardJavafxView extends HBox {
         p2Vbox.setAlignment(Pos.TOP_CENTER);
         tieVbox.setAlignment(Pos.TOP_CENTER);
         scoreBoardVbox.setAlignment(Pos.TOP_CENTER);
+
+        resetBut.setPrefWidth(230);
+        exitBut.setPrefWidth(230);
 
         scoreBoardVbox.setPadding(new Insets(80));
 
