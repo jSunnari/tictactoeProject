@@ -30,7 +30,7 @@ public class ResultView extends VBox{
     private User currentUser;
 
     private Label resultLabel = new Label("Your results");
-    private Label highScoreLabel = new Label("Highscore");
+    private Label highScoreLabel = new Label("Top 5");
     private Button backBtn = new Button("Back");
     private Label wonLabel = new Label("Won");
     private Label tieLabel = new Label("Tie");
