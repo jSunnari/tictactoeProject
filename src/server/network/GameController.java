@@ -36,9 +36,12 @@ public class GameController {
     /**
      * Connect players for a match.
      *
-     * Adds the Connect
+     * The ConnectPlayers-object including a reference to the Players User-object and the players NetworkCommunication-class
+     * will be added to an arraylist and the counter will be increased with 1.
+     * When two players has connected, the server will set the first user to player 1 and the seconds player to player 2,
+     * the server will then send a command to each player with an object of the opponentuser and set the counter to 0 again.
      *
-     * @param user = object including a reference to the user and a reference to its own threaded class for communication.
+     * @param user = The player who is in the que for playing.
      */
     public void connectPlayers(ConnectPlayers user){
         counter++;
@@ -68,9 +71,6 @@ public class GameController {
      *
      * When it finds it, it will send the message via the already existing NetworkCommunication-class(threaded class for the
      * opponent user).
-     *
-     *
-     *
      */
     public void updateClient(String command, String user, MarkerData markerData){
         for (ConnectPlayers player : connectPlayers){
@@ -80,6 +80,16 @@ public class GameController {
         }
     }
 
+    /**
+     * Update a client with information about the game.
+     *
+     * When a player wants to send data to the players opponent, the command and data will come here,
+     * This method will then search the arraylist for the oppoentusers NetworkCommunication-class and send data trough it.
+     *
+     * @param command = the command to send.
+     * @param opponentPlayer = the oppoentPlayer.
+     * @param winningPlayer = if the game ended, this is the winningplayer.
+     */
     public void updateClient(String command, String opponentPlayer, User winningPlayer){
         for (ConnectPlayers player : connectPlayers){
             if (opponentPlayer.equals(player.getUser().getUsername())) {
@@ -87,7 +97,7 @@ public class GameController {
             }
         }
     }
-
+    //Same as above but overloaded:
     public void updateClient(String command, String user){
         for (ConnectPlayers player : connectPlayers){
             if (user.equals(player.getUser().getUsername())) {

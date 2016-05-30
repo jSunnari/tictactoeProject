@@ -145,7 +145,12 @@ public class NetworkCommunication implements Runnable{
                 serverController.updateUser(updateUser);
                 break;
 
-            //Get highscore-list:
+            //Send an updated user (new data):
+            case "getUpdatedUser":
+                User userToUpdate = gson.fromJson(cmdData.get(0), User.class);
+                send("updateUser", serverController.getUser(userToUpdate.getUsername()));
+
+            //Send highscore-list:
             case "getHighscore":
                 send("getHighscore", serverController.getHighscore());
                 break;

@@ -40,7 +40,6 @@ public class NetworkCommunication implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -97,6 +96,12 @@ public class NetworkCommunication implements Runnable {
                 clientController.createAccountResponse("created", "User has been created!");
                 break;
 
+            //Get current user with updated data from database:
+            case "updateUser":
+                User updateUser = gson.fromJson(cmdData.get(0), User.class);
+                clientController.updateCurrUser(updateUser);
+                break;
+
             //Get the highscore-list:
             case "getHighscore":
                 User[] highscoreList = gson.fromJson(cmdData.get(0), User[].class);
@@ -143,15 +148,13 @@ public class NetworkCommunication implements Runnable {
             //The winning player of a round:
             case "winningPlayer":
                 User winningPlayer = gson.fromJson(cmdData.get(0), User.class);
-                System.out.println(winningPlayer.getPlayer());
                 clientController.setScore(winningPlayer);
                 break;
 
-            //If an opponent stopped a game (exited):
+            //If an opponent stopped a game (exit):
             case "opponentStoppedGame":
                 clientController.opponentStoppedGame();
                 break;
-
         }
     }
 
@@ -166,7 +169,6 @@ public class NetworkCommunication implements Runnable {
 
         output.println(gson.toJson(currMessage));
     }
-
 
     /**
      * Disconnect-method,
@@ -188,5 +190,4 @@ public class NetworkCommunication implements Runnable {
             e.printStackTrace();
         }
     }
-
 }

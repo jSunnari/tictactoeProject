@@ -14,7 +14,6 @@ import java.net.*;
 public class NetworkConnection {
 
     private Socket socket;
-    private boolean connected;
     private NetworkCommunication networkCommunication;
     private ClientController clientController;
 

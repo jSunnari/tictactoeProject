@@ -1,5 +1,20 @@
 package server.datamodel;
 
+/**
+ * Entity-class for User
+ *
+ * id = database-id.
+ * username = users username.
+ * password = users password.
+ * email = users email.
+ * login = if the user login was successful or not.
+ * player = if player 1 or player 2.
+ * won matches = how many won matches.
+ * tie matches = how many tie matches.
+ * lost matches = how many lost maches.
+ * rank = won matches gets 3 points, tie matches gets 1 points, lost matches gets 0 points.
+ */
+
 import javax.persistence.*;
 
 /**
@@ -18,6 +33,7 @@ import javax.persistence.*;
                 name = "getHighscore",
                 query = "SELECT c FROM User c ORDER BY c.rank"),
 })
+
 public class User {
 
     @Id

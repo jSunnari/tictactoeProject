@@ -1,5 +1,11 @@
 package server.beans;
 
+/**
+ * Message-bean,
+ * used to send data between server and client.
+ * Holds a string as a command and a List as jsondata.
+ */
+
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
