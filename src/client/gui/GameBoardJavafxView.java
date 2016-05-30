@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -39,6 +40,7 @@ public class GameBoardJavafxView extends HBox {
     private Image crossImg = new Image("file:src/client/res/crossWhite.png");
     private Image circleImg = new Image("file:src/client/res/circleWhite.png");
     private FadeTransition fadeTransition;
+    private AudioClip crossAudio = new AudioClip("");
     //Scoreboard components
     private String playerX = " (X)";
     private String playerO = " (O)";
