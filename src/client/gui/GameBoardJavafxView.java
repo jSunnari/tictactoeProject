@@ -33,9 +33,11 @@ public class GameBoardJavafxView extends HBox {
     private Tile[][] board = new Tile[3][3];
     //List for possible win combinations
     private List<Combo> combos = new ArrayList<>();
+    //Game graphics
     private Image crossImg = new Image("file:src/client/res/crossWhite.png");
     private Image circleImg = new Image("file:src/client/res/circleWhite.png");
     private FadeTransition fadeTransition;
+    //Scoreboard components
     private String playerX = " (X)";
     private String playerO = " (O)";
     private String p1Name = "";
@@ -44,16 +46,16 @@ public class GameBoardJavafxView extends HBox {
     private int p1Score = 0;
     private int p2Score = 0;
     private int tieScore = 0;
-    //Components for scoreboard
     private Label p1NameLbl = new Label();
     private Label p2NameLbl = new Label();
     private Label tieNameLbl = new Label(tieName);
     private Label p1ScoreLbl = new Label("0");
     private Label p2ScoreLbl = new Label("0");
     private Label tieScoreLbl = new Label("0");
-    //Layout boxes for the scoreboard
+    //New game and exit game buttons
     private Button resetBut = new Button("Play again");
     private Button exitBut = new Button("Exit game");
+    //Gameboard layouts
     private Pane gameBoard = new Pane();
     private HBox gameBoardHbox = new HBox();
     private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
@@ -65,7 +67,7 @@ public class GameBoardJavafxView extends HBox {
     public GameBoardJavafxView(){
 
         gameBoardHbox = this;
-
+        //Placement for the different components
         p1Vbox.setAlignment(Pos.TOP_CENTER);
         p2Vbox.setAlignment(Pos.TOP_CENTER);
         tieVbox.setAlignment(Pos.TOP_CENTER);
@@ -76,14 +78,14 @@ public class GameBoardJavafxView extends HBox {
         gameBoardHbox.getChildren().addAll(createContent(), scoreBoardVbox);
         gameBoardHbox.setPadding(new Insets(0, 0, 0, 30));
         gameBoardHbox.setAlignment(Pos.TOP_CENTER);
-
+        //Adding css classes to our components
         p1Vbox.getStyleClass().add("playerScoreVBoxes");
         p2Vbox.getStyleClass().add("playerScoreVBoxes");
         tieVbox.getStyleClass().add("playerScoreVBoxes");
         resetBut.getStyleClass().add("form-button");
         exitBut.getStyleClass().add("form-button");
     }
-
+    //
     private Parent createContent() {
         gameBoard.setPrefSize(WIDTH, HEIGHT);
         //Setting a windowsize for our tictactoeGame
@@ -99,9 +101,9 @@ public class GameBoardJavafxView extends HBox {
                 board[j][i] = tile;
             }
         }
-//Setting up different types of win scenarios
-//Adding all the possible ways to win in an arraylist
-//Which we can later compare to the laid out pieces on our board
+        //Setting up different types of win scenarios
+        //Adding all the possible ways to win in an arraylist
+        //Which we can later compare to the laid out pieces on our board
         // horizontal
         /*
         *0{0, 1, 2}
@@ -139,6 +141,7 @@ public class GameBoardJavafxView extends HBox {
         this.playable = playable;
     }
 
+    //A boolean that compare our current tileplacements with our saved "Winning combinations"
     public boolean checkTiles() {
         boolean winningPlayer = false;
         for (Combo combo : combos) {
@@ -163,9 +166,6 @@ public class GameBoardJavafxView extends HBox {
         playable = true;
     }
 
-    public void endGame(){
-
-    }
 
     private void playWinAnimation(Combo combo) {
         Platform.runLater(() -> {
@@ -180,7 +180,7 @@ public class GameBoardJavafxView extends HBox {
             }
         });
     }
-
+    //Methods that increases the score on the scoreboard
     public void incPlayer1Score(){
         Platform.runLater(() -> {
             p1Score++;
@@ -207,11 +207,11 @@ public class GameBoardJavafxView extends HBox {
         private Combo(Tile... tiles) {
             this.tiles = tiles;
         }
-//If our tiles doesnt match up with our different combinations we return false, because nobody has won
+        //If our tiles doesnt match up with our different combinations we return false, because nobody has won
         private boolean isComplete() {
             if (tiles[0].getValue().isEmpty())
                 return false;
-//we return true if our combo conditions are met
+        //we return true if our combo conditions are met
             return tiles[0].getValue().equals(tiles[1].getValue())
                     && tiles[0].getValue().equals(tiles[2].getValue());
         }
@@ -233,35 +233,6 @@ public class GameBoardJavafxView extends HBox {
             text.setVisible(false);
             setAlignment(Pos.CENTER);
             getChildren().addAll(tileBorder, imgView);
-
-            /*
-            //A mouseEvent inside our tileClass in order to listen which tile is pressed on
-            setOnMouseClicked(event -> {
-                if (!playable)
-                    return;
-
-                if(!(getValue().equals("X") || getValue().equals("O"))) {
-                    if (event.getButton() == MouseButton.PRIMARY) {
-                        if (!turnX)
-                            return;
-
-                        drawX();
-                        System.out.println(getTileId());
-                        turnX = false;
-                        showTurn();
-                        checkTiles();
-                    } else if (event.getButton() == MouseButton.SECONDARY) {
-                        if (turnX)
-                            return;
-
-                        drawO();
-                        turnX = true;
-                        showTurn();
-                        checkTiles();
-                    }
-                }
-            });
-            */
         }
 
         public String getValue() {
@@ -288,21 +259,6 @@ public class GameBoardJavafxView extends HBox {
     public Tile[][] getBoard(){
         return board;
     }
-/*
-    public void checkForTie(){
-        //The tieCounter counts the number of pieces are out on the board and checks if the game has not been won by anyone. Then it's a tie
-        if(tieCounter == 9 && playable){
-            gameTie = true;
-        }
-        if(gameTie){
-            int currTieScore = Integer.parseInt(tieScoreLbl.getText());
-            currTieScore = currTieScore + 1;
-            tieScoreLbl.setText(Integer.toString(currTieScore));
-        }
-        tieCounter = 0;
-        gameTie = false;
-    }
-    */
 
     public boolean isPlayable() {
         return playable;
