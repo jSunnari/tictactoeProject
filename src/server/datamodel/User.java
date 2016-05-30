@@ -31,7 +31,7 @@ import javax.persistence.*;
                 query = "SELECT c FROM User c"),
         @NamedQuery(
                 name = "getHighscore",
-                query = "SELECT c FROM User c ORDER BY c.rank"),
+                query = "SELECT c FROM User c ORDER BY c.rank DESC"),
 })
 
 public class User {

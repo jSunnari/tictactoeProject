@@ -67,6 +67,7 @@ public class GameBoardJavafxView extends HBox {
     public GameBoardJavafxView(){
 
         gameBoardHbox = this;
+        resetBut.setVisible(false);
         //Placement for the different components
         p1Vbox.setAlignment(Pos.TOP_CENTER);
         p2Vbox.setAlignment(Pos.TOP_CENTER);
@@ -276,6 +277,10 @@ public class GameBoardJavafxView extends HBox {
             p2Name = name;
             p2NameLbl.setText(p2Name + playerO + turn);
         });
+    }
+
+    public void setPlayAgainVisible(boolean visible){
+        resetBut.setVisible(visible);
     }
 
 }

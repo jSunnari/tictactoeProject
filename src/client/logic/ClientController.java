@@ -219,6 +219,12 @@ public class ClientController{
     void updateResults(){
         networkCommunication.send("getUpdatedUser", currUser);
         networkCommunication.send("getHighscore", "");
+    }
+
+    /**
+     * When the server is done with updating results, change view:
+     */
+    public void resultsUpdated(){
         resultView.setHighscoreList(highscoreList);
         resultView.setCurrentUser(currUser);
         Platform.runLater(() -> mainView.setMainContent(resultView));
@@ -364,6 +370,7 @@ public class ClientController{
     public void resetGame(){
         clickCounter = 0;
         gameBoardView.setPlayable(true);
+        gameBoardView.setPlayAgainVisible(false);
         gameBoardView.resetBoard();
     }
 
@@ -449,13 +456,16 @@ public class ClientController{
         if (winningPlayer && yourTurn){
             networkCommunication.send("winningPlayer", currOpponent);
             currUser.setWonMatches(currUser.getWonMatches()+1);
+            gameBoardView.setPlayAgainVisible(true);
         }
         else if(winningPlayer && !yourTurn){
             currUser.setLostMatches(currUser.getLostMatches()+1);
+            gameBoardView.setPlayAgainVisible(true);
         }
         else if(!winningPlayer && clickCounter == 9){
             currUser.setTieMatches(currUser.getTieMatches()+1);
             gameBoardView.incTieScore();
+            gameBoardView.setPlayAgainVisible(true);
         }
 
         /**
@@ -522,7 +532,7 @@ public class ClientController{
      * @param user = user (including scores).
      */
     public void addToHighscoreList(User user){
-        highscoreList.add(0, user);
+        highscoreList.add(user);
     }
 
     /**
@@ -537,7 +547,7 @@ public class ClientController{
      * Disconnect, calls method in networkConnection (if connected):
      */
     public void disconnect(boolean exit) {
-        if (currUser != null) {
+        if (connectedToServer) {
             networkConnection.disconnect(exit);
         }
         else {
