@@ -1,6 +1,8 @@
 package client.gui;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -37,6 +40,7 @@ public class GameBoardJavafxView extends HBox {
     private Image crossImg = new Image("file:src/client/res/crossWhite.png");
     private Image circleImg = new Image("file:src/client/res/circleWhite.png");
     private FadeTransition fadeTransition;
+    private AudioClip crossAudio = new AudioClip("");
     //Scoreboard components
     private String playerX = " (X)";
     private String playerO = " (O)";
@@ -80,7 +84,7 @@ public class GameBoardJavafxView extends HBox {
         scoreBoardVbox.setPadding(new Insets(80));
 
         gameBoardHbox.getChildren().addAll(createContent(), scoreBoardVbox);
-        gameBoardHbox.setPadding(new Insets(0, 0, 0, 30));
+        gameBoardHbox.setPadding(new Insets(50, 0, 0, 30));
         gameBoardHbox.setAlignment(Pos.TOP_CENTER);
         //Adding css classes to our components
         p1Vbox.getStyleClass().add("playerScoreVBoxes");
@@ -88,6 +92,8 @@ public class GameBoardJavafxView extends HBox {
         tieVbox.getStyleClass().add("playerScoreVBoxes");
         resetBut.getStyleClass().add("form-button");
         exitBut.getStyleClass().add("form-button");
+
+
     }
     //
     private Parent createContent() {
@@ -227,6 +233,7 @@ public class GameBoardJavafxView extends HBox {
         //Create a textholder to help us identify the different images
         private Text text = new Text();
         private int id;
+        private ScaleTransition scaleTransition;
 
         private Tile(int id) {
             this.id = id;
@@ -236,6 +243,13 @@ public class GameBoardJavafxView extends HBox {
             tileBorder.setStrokeWidth(10);
             text.setVisible(false);
             setAlignment(Pos.CENTER);
+            scaleTransition = new ScaleTransition(Duration.seconds(0.15), imgView);
+            scaleTransition.setByX(.01);
+            scaleTransition.setByY(.01);
+            scaleTransition.setToX(1.1);
+            scaleTransition.setToY(1.1);
+            scaleTransition.setCycleCount(2);
+            scaleTransition.setAutoReverse(true);
             getChildren().addAll(tileBorder, imgView);
         }
 
@@ -246,12 +260,15 @@ public class GameBoardJavafxView extends HBox {
         public void drawX() {
             imgView.setImage(crossImg);
             tieCounter = 1 + tieCounter;
+            System.out.println("PLLAAAAYY!!");
+            scaleTransition.play();
             text.setText("X");
         }
 
         public void drawO() {
             imgView.setImage(circleImg);
             tieCounter = 1 + tieCounter;
+            scaleTransition.play();
             text.setText("O");
         }
 

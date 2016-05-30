@@ -38,6 +38,7 @@ public class HighscoreTable extends TableView<User>{
         indexColumn.setMaxWidth(60);
         indexColumn.setCellValueFactory(column-> new ReadOnlyObjectWrapper<Number>(this.getItems().indexOf(column.getValue())+1));
 
+
         username.setCellValueFactory(new PropertyValueFactory<User, String>("username"));
         username.setMinWidth(260);
         username.setMaxWidth(260);

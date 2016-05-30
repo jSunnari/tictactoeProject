@@ -105,9 +105,7 @@ public class UserdetailsView extends VBox {
                 validationLabel.getStyleClass().add("ok-label");
                 validationLabel.setText(message);
                 break;
-            case "back":
-                validationLabel.setText(message);
-                break;
+
         }
 
     }
