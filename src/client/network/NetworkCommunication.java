@@ -141,7 +141,7 @@ public class NetworkCommunication implements Runnable {
                 clientController.setCurrentUser(player2);
                 break;
 
-            //Resets the game, someone pressed play again:
+            //Resets the game:
             case "resetGame":
                 clientController.resetGame();
                 break;
@@ -156,6 +156,10 @@ public class NetworkCommunication implements Runnable {
             case "opponentStoppedGame":
                 clientController.opponentStoppedGame();
                 break;
+
+            //Opponent wants to play again:
+            case "playAgain":
+                clientController.opponentRequestedPlayAgain();
         }
     }
 

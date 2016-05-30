@@ -30,6 +30,7 @@ public class ClientController{
     private boolean yourTurn = false;
     private int clickCounter = 0;
     private ObservableList<User> highscoreList = FXCollections.observableArrayList();
+    private boolean opponentReqRematch = false;
 
     //VIEWS:
     private MainView mainView;
@@ -109,7 +110,7 @@ public class ClientController{
          * GameBoardView, Listeners:
          */
         //RESET GAME - sends a command to server.
-        gameBoardView.resetGameListener(event -> networkCommunication.send("resetGame", currOpponent));
+        gameBoardView.resetGameListener(event -> requestPlayAgain());
 
         //EXIT GAME - calls method stoppedGame();
         gameBoardView.exitGameListener(event -> stoppedGame());
@@ -362,6 +363,22 @@ public class ClientController{
         Platform.runLater(() -> mainView.setMainContent(menuView));
     }
 
+    void requestPlayAgain(){
+        if (!opponentReqRematch) {
+            networkCommunication.send("playAgain", currOpponent);
+            gameBoardView.setPlayAgainBtnVisible(false);
+            gameBoardView.setPlayAgainLbl("Waiting for " + currOpponent.getUsername() + "..");
+        }
+        else{
+            networkCommunication.send("resetGame", currOpponent);
+        }
+    }
+
+    public void opponentRequestedPlayAgain(){
+        opponentReqRematch = true;
+        gameBoardView.setPlayAgainLbl(currOpponent.getUsername() + " wants to play again!");
+    }
+
     /**
      * Resets the gameboard,
      * The clickcounter gets a value of 0,
@@ -369,9 +386,12 @@ public class ClientController{
      */
     public void resetGame(){
         clickCounter = 0;
+        gameBoardView.setPlayAgainLbl("");
         gameBoardView.setPlayable(true);
-        gameBoardView.setPlayAgainVisible(false);
+        gameBoardView.setPlayAgainBtnVisible(false);
+        gameBoardView.setExitBtnVisible(false);
         gameBoardView.resetBoard();
+        opponentReqRematch = false;
     }
 
     /**
@@ -456,16 +476,19 @@ public class ClientController{
         if (winningPlayer && yourTurn){
             networkCommunication.send("winningPlayer", currOpponent);
             currUser.setWonMatches(currUser.getWonMatches()+1);
-            gameBoardView.setPlayAgainVisible(true);
+            gameBoardView.setPlayAgainBtnVisible(true);
+            gameBoardView.setExitBtnVisible(true);
         }
         else if(winningPlayer && !yourTurn){
             currUser.setLostMatches(currUser.getLostMatches()+1);
-            gameBoardView.setPlayAgainVisible(true);
+            gameBoardView.setPlayAgainBtnVisible(true);
+            gameBoardView.setExitBtnVisible(true);
         }
         else if(!winningPlayer && clickCounter == 9){
             currUser.setTieMatches(currUser.getTieMatches()+1);
             gameBoardView.incTieScore();
-            gameBoardView.setPlayAgainVisible(true);
+            gameBoardView.setPlayAgainBtnVisible(true);
+            gameBoardView.setExitBtnVisible(true);
         }
 
         /**
