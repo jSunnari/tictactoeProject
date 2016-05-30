@@ -71,9 +71,9 @@ public class ClientController{
         userdetailsView.createAccountBtn(event -> createAccount());
 
         //BACK - switches to the loginform again.
-        userdetailsView.backBtnListener(event -> resetValidation());
         userdetailsView.backBtnListener(event -> mainView.setMainContent(loginView));
         updateAccount.backBtnListener(event -> mainView.setMainContent(menuView));
+
 
         /**
          * MenuView, Listeners:
@@ -225,10 +225,6 @@ public class ClientController{
         }
     }
 
-    void resetValidation(){
-        Platform.runLater(() -> userdetailsView.setValidationLabel("back", ""));
-    }
-
     /**
      * Response from networkcommunication after trying to creating an account.
      * @param res =
@@ -290,10 +286,10 @@ public class ClientController{
 
     public void resetGame(){
         clickCounter = 0;
-        //gameBoardView.checkForTie();
         gameBoardView.setPlayable(true);
         gameBoardView.resetBoard();
     }
+
 
     void clickOnTile(){
         board = gameBoardView.getBoard();
