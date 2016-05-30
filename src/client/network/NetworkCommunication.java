@@ -106,11 +106,11 @@ public class NetworkCommunication implements Runnable {
             //Get the highscore-list:
             case "getHighscore":
                 User[] highscoreList = gson.fromJson(cmdData.get(0), User[].class);
+                clientController.setUserHighscore(highscoreList);
 
                 clientController.clearHighscoreList();
-
-                for (User highScoreUser : highscoreList){
-                    clientController.addToHighscoreList(highScoreUser);
+                for (int i = 0; i < 5; i++) {
+                    clientController.addToHighscoreList(highscoreList[i]);
                 }
                 break;
 

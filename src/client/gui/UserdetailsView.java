@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
 /**
@@ -52,6 +53,8 @@ public class UserdetailsView extends VBox {
         updateAccountBtn.getStyleClass().add("form-button");
         backBtn.getStyleClass().add("form-button");
         headerText.getStyleClass().add("form-header");
+
+        usernameTextField.addEventFilter(KeyEvent.KEY_TYPED, maxLength(12));
     }
 
     public void createAccountBtn(EventHandler<ActionEvent> buttonListener){
@@ -90,6 +93,7 @@ public class UserdetailsView extends VBox {
         emailTextField.setText(email);
     }
 
+    //Setting validation/error-label:
     public void setValidationLabel(String command, String message){
         switch (command) {
             case "error":
@@ -110,6 +114,7 @@ public class UserdetailsView extends VBox {
 
     }
 
+    //Check that all fields is filled:
     public boolean checkFields(){
         boolean error = true;
         if (
@@ -123,6 +128,7 @@ public class UserdetailsView extends VBox {
         return error;
     }
 
+    //Initialize when "update user"
     public void initUpdateSettings(){
         headerText.setText("Account settings");
         vBox.getChildren().setAll(
@@ -139,11 +145,26 @@ public class UserdetailsView extends VBox {
         );
     }
 
+    //Clear fields:
     public void clearFields(){
         usernameTextField.clear();
         passwordTextField.clear();
         emailTextField.clear();
         validationLabel.setText("");
+    }
+
+    //Maxlength on username:
+    public EventHandler<KeyEvent> maxLength(final Integer i) {
+        return new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent arg0) {
+                TextField tx = (TextField) arg0.getSource();
+                if (tx.getText().length() >= i) {
+                    arg0.consume();
+                }
+            }
+        };
     }
 
 }

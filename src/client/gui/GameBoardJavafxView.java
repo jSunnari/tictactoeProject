@@ -81,9 +81,10 @@ public class GameBoardJavafxView extends HBox {
         p2Vbox.setAlignment(Pos.TOP_CENTER);
         tieVbox.setAlignment(Pos.TOP_CENTER);
         scoreBoardVbox.setAlignment(Pos.TOP_CENTER);
+        butHbox.setAlignment(Pos.CENTER);
 
-        resetBut.setPrefWidth(230);
-        exitBut.setPrefWidth(230);
+        resetBut.setPrefWidth(220);
+        exitBut.setPrefWidth(220);
 
         scoreBoardVbox.setPadding(new Insets(80));
 
@@ -96,7 +97,6 @@ public class GameBoardJavafxView extends HBox {
         tieVbox.getStyleClass().add("playerScoreVBoxes");
         resetBut.getStyleClass().add("form-button");
         exitBut.getStyleClass().add("form-button");
-
 
     }
     //
