@@ -16,6 +16,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -41,7 +44,9 @@ public class GameBoardJavafxView extends HBox {
     private Image crossImg = new Image("file:src/client/res/crossWhite.png");
     private Image circleImg = new Image("file:src/client/res/circleWhite.png");
     private FadeTransition fadeTransition;
-    //private AudioClip crossAudio = new AudioClip("");
+    private AudioClip crossAudio = new AudioClip(GameBoardJavafxView.class.getResource("../res/plop.wav").toString());
+    private AudioClip circleAudio = new AudioClip(GameBoardJavafxView.class.getResource("../res/plop.wav").toString());
+    private MediaPlayer elevatorMusic = new MediaPlayer(new Media("https://api.spotify.com/v1/tracks/1MxgpGbbzGFLUxAzt0Qqcs"));
     //Scoreboard components
     private String playerX = " (X)";
     private String playerO = " (O)";
@@ -87,11 +92,12 @@ public class GameBoardJavafxView extends HBox {
         exitBut.setPrefWidth(220);
 
         scoreBoardVbox.setPadding(new Insets(80));
-
+        elevatorMusic.setAutoPlay(true);
         gameBoardHbox.getChildren().addAll(createContent(), scoreBoardVbox);
         gameBoardHbox.setPadding(new Insets(50, 0, 0, 30));
         gameBoardHbox.setAlignment(Pos.TOP_CENTER);
         //Adding css classes to our components
+        circleAudio.setRate(1.5);
         p1Vbox.getStyleClass().add("playerScoreVBoxes");
         p2Vbox.getStyleClass().add("playerScoreVBoxes");
         tieVbox.getStyleClass().add("playerScoreVBoxes");
@@ -264,7 +270,8 @@ public class GameBoardJavafxView extends HBox {
         public void drawX() {
             imgView.setImage(crossImg);
             tieCounter = 1 + tieCounter;
-            System.out.println("PLLAAAAYY!!");
+            elevatorMusic.play();
+            crossAudio.play();
             scaleTransition.play();
             text.setText("X");
         }
@@ -272,6 +279,7 @@ public class GameBoardJavafxView extends HBox {
         public void drawO() {
             imgView.setImage(circleImg);
             tieCounter = 1 + tieCounter;
+            circleAudio.play();
             scaleTransition.play();
             text.setText("O");
         }
