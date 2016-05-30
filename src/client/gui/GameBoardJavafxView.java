@@ -76,7 +76,7 @@ public class GameBoardJavafxView extends HBox {
         scoreBoardVbox.setPadding(new Insets(80));
 
         gameBoardHbox.getChildren().addAll(createContent(), scoreBoardVbox);
-        gameBoardHbox.setPadding(new Insets(0, 0, 0, 30));
+        gameBoardHbox.setPadding(new Insets(50, 0, 0, 30));
         gameBoardHbox.setAlignment(Pos.TOP_CENTER);
         //Adding css classes to our components
         p1Vbox.getStyleClass().add("playerScoreVBoxes");
