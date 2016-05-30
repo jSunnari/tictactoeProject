@@ -1,6 +1,12 @@
 package client.beans;
 
 /**
+ * MarkerData,
+ * Holds the markerId (1-9) depending on which tile it is, the markerType depending on if it is a X or O
+ * and the opponents username for knowing who to end the data to.
+ */
+
+/**
  * Created by Jonas on 2016-05-26.
  */
 
@@ -11,7 +17,6 @@ public class MarkerData {
 
     public MarkerData(int markerId, String opponentUsername) {
         this.markerId = markerId;
-        this.markerType = markerType;
         this.opponentUsername = opponentUsername;
     }
 

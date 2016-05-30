@@ -66,4 +66,8 @@ public class MainView {
     public void setMainContent(Node view){
         mainBorderPane.setCenter(view);
     }
+
+    public void setTitle(String username){
+        window.setTitle("TicTacToe - " + username);
+    }
 }

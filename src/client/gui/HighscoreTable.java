@@ -6,11 +6,9 @@ package client.gui;
 
 import client.beans.User;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 
 
 /**
@@ -36,10 +34,6 @@ public class HighscoreTable extends TableView<User>{
 
     public void setTableList (ObservableList<User> userObservableList){
         this.setItems(userObservableList);
-    }
-
-    public void doubleClickRow(EventHandler<MouseEvent> listener){
-        this.setOnMouseClicked(listener);
     }
 
 }

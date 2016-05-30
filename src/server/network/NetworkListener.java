@@ -64,14 +64,4 @@ public class NetworkListener implements Runnable {
             }
         }
     }
-
-    public void disconnectServer(){
-        connected = false;
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

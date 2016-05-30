@@ -124,5 +124,6 @@ public class ResultView extends VBox{
         tiePointsLbl.setText(String.valueOf(currentUser.getTieMatches()));
         lostPointsLbl.setText(String.valueOf(currentUser.getLostMatches()));
         scorePointsLbl.setText(String.valueOf(currentUser.getRank()));
+        resultLabel.setText("Your results, " + currentUser.getUsername());
     }
 }

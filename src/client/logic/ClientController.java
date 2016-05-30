@@ -1,7 +1,8 @@
 package client.logic;
 
 /**
- * ClientController
+ * ClientController,
+ * The controller for the client-app.
  */
 
 import client.beans.MarkerData;
@@ -71,9 +72,9 @@ public class ClientController{
         userdetailsView.createAccountBtn(event -> createAccount());
 
         //BACK - switches to the loginform again.
+        userdetailsView.backBtnListener(event -> resetValidation());
         userdetailsView.backBtnListener(event -> mainView.setMainContent(loginView));
         updateAccount.backBtnListener(event -> mainView.setMainContent(menuView));
-
 
         /**
          * MenuView, Listeners:
@@ -121,6 +122,9 @@ public class ClientController{
 
     }
 
+    /**
+     * Connect to server.
+     */
     void connect(){
         //Try to connect to server:
         String ip = settingsView.getIpNumber();
@@ -134,6 +138,7 @@ public class ClientController{
      * Update connection-method,
      *
      * Disconnects then connects again to new settings,
+     * (Used when changing the connection settings)
      * changes the content to loginscreen again:
      */
     void updateConnection(){
@@ -149,6 +154,7 @@ public class ClientController{
      * Log in-method,
      *
      * Validates and sends a login-request to the server:
+     * Gets response to either connectionFailed or setCurrentUser.
      */
     void login() {
 
@@ -183,7 +189,10 @@ public class ClientController{
 
         //If the boolean login is true in the user-object sent from the server:
         if (currUser.isLogin()){
-            Platform.runLater(() -> mainView.setMainContent(menuView));
+            Platform.runLater(() -> {
+                mainView.setMainContent(menuView);
+                mainView.setTitle(currUser.getUsername());
+            });
             loginView.clearFields();
         }
         //Else, the username or password was incorrect:
@@ -198,10 +207,17 @@ public class ClientController{
      */
     void logout(){
         Platform.runLater(() -> mainView.setMainContent(loginView));
+        mainView.setTitle("");
         currUser = null;
     }
 
+    /**
+     * Update scores of currentuser from database,
+     * Get newest higscore-list from database,
+     * Change the view to resultView.
+     */
     void updateResults(){
+        networkCommunication.send("getUpdatedUser", currUser);
         networkCommunication.send("getHighscore", "");
         resultView.setHighscoreList(highscoreList);
         resultView.setCurrentUser(currUser);
@@ -210,6 +226,8 @@ public class ClientController{
 
     /**
      * Create account-method,
+     * Sends a request to create a new user,
+     * The createAccountResponse()-method will then be called and showing if creating user was successful or not.
      */
     void createAccount() {
         String username = userdetailsView.getUsername();
@@ -225,6 +243,10 @@ public class ClientController{
         }
     }
 
+    void resetValidation(){
+        Platform.runLater(() -> userdetailsView.setValidationLabel("back", ""));
+    }
+
     /**
      * Response from networkcommunication after trying to creating an account.
      * @param res =
@@ -235,6 +257,10 @@ public class ClientController{
         Platform.runLater(() -> userdetailsView.setValidationLabel(res, message));
     }
 
+    /**
+     * Update a users information, fill the form with the current data.
+     * If OK-button is clicked, take the new data and send to the database.
+     */
     void updateAccountSettings(){
         updateAccount.initUpdateSettings();
         updateAccount.setUsername(currUser.getUsername());
@@ -256,41 +282,96 @@ public class ClientController{
         });
     }
 
+    //------------------------------------------ GAME CONTROLS ---------------------------------------------------------
+
     /**
-     * *************** GAME CONTROLS *******************
+     * Play game,
+     * change the view to the loading view,
+     * send a command to the server saying to are ready to play.
+     * (when another player is ready to play, the opponentConnected()-method will be called)
      */
-
-
     void play(){
         mainView.setMainContent(loadingView);
         loadingView.play();
         networkCommunication.send("startGame", "");
     }
 
+    /**
+     * When an opponent has connected, the game will start:
+     * @param opponentUser = the opponent player.
+     */
+    public void opponentConnected(User opponentUser){
+        currOpponent = opponentUser;
+
+        if (currUser.getPlayer() == 1){
+            yourTurn = true;
+            gameBoardView.setPlayerX(currUser.getUsername(), "*");
+            gameBoardView.setPlayerO(opponentUser.getUsername(), "");
+        }
+        else if(currUser.getPlayer() == 2) {
+            yourTurn = false;
+            gameBoardView.setPlayerO(currUser.getUsername(), "");
+            gameBoardView.setPlayerX(opponentUser.getUsername(), "*");
+        }
+
+        Platform.runLater(() -> mainView.setMainContent(gameBoardView));
+        clickOnTile();
+    }
+
+
+    /**
+     * Cancel game,
+     * The player will get removed from the servers "players in a game"-list.
+     * Resets game and changes view to the main menu again.
+     */
     void cancelGame(){
         networkCommunication.send("removeFromGameList", "");
+        resetGame();
+        currOpponent = null;
         mainView.setMainContent(menuView);
     }
 
+    /**
+     * You stopped a game,
+     * Updates the player with the new scores/results,
+     * Calls a command to stop the game and sends the opponents user object so that the server can stop that players game too.
+     */
     void stoppedGame(){
         networkCommunication.send("updateUser", currUser);
         networkCommunication.send("stopGame", currOpponent);
         cancelGame();
     }
 
+    /**
+     * An opponent stopped a game,
+     * Update the player with the new scores/results,
+     * Remove the player from the server "players in a game"-list.
+     * Resets the game and changes the view to the main menu again.
+     */
     public void opponentStoppedGame(){
         networkCommunication.send("updateUser", currUser);
         networkCommunication.send("removeFromGameList", "");
+        resetGame();
+        currOpponent = null;
         Platform.runLater(() -> mainView.setMainContent(menuView));
     }
 
+    /**
+     * Resets the gameboard,
+     * The clickcounter gets a value of 0,
+     * The gameboard is playable again and the old markers a gone.
+     */
     public void resetGame(){
         clickCounter = 0;
         gameBoardView.setPlayable(true);
         gameBoardView.resetBoard();
     }
 
-
+    /**
+     * Listens for when clicking on a tile,
+     * Checks if it's your turn, and checks if the tile is empty,
+     * Sends the data to the method sendMarkerData()
+     */
     void clickOnTile(){
         board = gameBoardView.getBoard();
 
@@ -310,6 +391,12 @@ public class ClientController{
         }
     }
 
+    /**
+     * Creates an object of MarkerData holding the tileID, if it's a X or O and the opponent-data.
+     * Sends the data to the server.
+     *
+     * @param currentTile = the tile the player clicked on.
+     */
     void sendMarkerData(GameBoardJavafxView.Tile currentTile){
         MarkerData markerData = new MarkerData(currentTile.getTileId(), currOpponent.getUsername());
         if (currUser.getPlayer() == 1){
@@ -372,7 +459,7 @@ public class ClientController{
         }
 
         /**
-         * Method that checks whos turn it is and changed the gameboard-marker beside the playername.
+         * Method that checks whose turn it is and changes the gameboard-marker beside the playername.
          */
         if (yourTurn){
             yourTurn = false;
@@ -416,24 +503,11 @@ public class ClientController{
     }
 
     /**
-     * When an opponent has connected, the game will start:
-     * @param opponentUser = the opponent player.
+     * Update current user:
+     * @param user = updated user:
      */
-    public void opponentConnected(User opponentUser){
-        currOpponent = opponentUser;
-
-        if (currUser.getPlayer() == 1){
-            yourTurn = true;
-            gameBoardView.setPlayerX(currUser.getUsername(), "*");
-            gameBoardView.setPlayerO(opponentUser.getUsername(), "");
-        }
-        else if(currUser.getPlayer() == 2) {
-            gameBoardView.setPlayerO(currUser.getUsername(), "");
-            gameBoardView.setPlayerX(opponentUser.getUsername(), "*");
-        }
-
-        Platform.runLater(() -> mainView.setMainContent(gameBoardView));
-        clickOnTile();
+    public void updateCurrUser(User user){
+        currUser = user;
     }
 
     /**
@@ -448,7 +522,7 @@ public class ClientController{
      * @param user = user (including scores).
      */
     public void addToHighscoreList(User user){
-        highscoreList.add(user);
+        highscoreList.add(0, user);
     }
 
     /**
@@ -460,10 +534,15 @@ public class ClientController{
     }
 
     /**
-     * Disconnect, calls method in networkConnection:
+     * Disconnect, calls method in networkConnection (if connected):
      */
     public void disconnect(boolean exit) {
-        networkConnection.disconnect(exit);
+        if (currUser != null) {
+            networkConnection.disconnect(exit);
+        }
+        else {
+            System.exit(0);
+        }
     }
 
 }
