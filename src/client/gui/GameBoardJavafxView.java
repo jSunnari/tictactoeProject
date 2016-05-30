@@ -56,6 +56,7 @@ public class GameBoardJavafxView extends HBox {
     private Label p1ScoreLbl = new Label("0");
     private Label p2ScoreLbl = new Label("0");
     private Label tieScoreLbl = new Label("0");
+    private Label playAgainLbl = new Label();
     //New game and exit game buttons
     private Button resetBut = new Button("Play again");
     private Button exitBut = new Button("Exit game");
@@ -65,13 +66,15 @@ public class GameBoardJavafxView extends HBox {
     private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
     private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl);
     private VBox tieVbox = new VBox( tieNameLbl, tieScoreLbl);
-    private VBox butHbox = new VBox(resetBut, exitBut);
+    private VBox butHbox = new VBox(resetBut, exitBut, playAgainLbl);
     private VBox scoreBoardVbox = new VBox( p1Vbox, tieVbox, p2Vbox, butHbox);
 
     public GameBoardJavafxView(){
 
         gameBoardHbox = this;
         resetBut.setVisible(false);
+        exitBut.setVisible(false);
+
         //Placement for the different components
         p1Vbox.setAlignment(Pos.TOP_CENTER);
         p2Vbox.setAlignment(Pos.TOP_CENTER);
@@ -296,8 +299,16 @@ public class GameBoardJavafxView extends HBox {
         });
     }
 
-    public void setPlayAgainVisible(boolean visible){
-        resetBut.setVisible(visible);
+    public void setPlayAgainBtnVisible(boolean visible){
+        Platform.runLater(() -> resetBut.setVisible(visible));
+    }
+
+    public void setExitBtnVisible(boolean visible){
+        Platform.runLater(() -> exitBut.setVisible(visible));
+    }
+
+    public void setPlayAgainLbl(String message){
+        Platform.runLater(() -> playAgainLbl.setText(message));
     }
 
 }
