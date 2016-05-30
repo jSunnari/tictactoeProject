@@ -23,6 +23,7 @@ public class HighscoreTable extends TableView<User>{
     public HighscoreTable() {
         this.setEditable(true);
 
+
         username.setCellValueFactory(new PropertyValueFactory<User, String>("username"));
         username.setPrefWidth(266);
         rank.setCellValueFactory(new PropertyValueFactory<User,Integer>("rank"));
