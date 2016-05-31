@@ -579,7 +579,9 @@ public class ClientController{
      * @param user = user (including scores).
      */
     public void addToHighscoreList(User user){
-        highscoreList.add(user);
+        if (highscoreList.size() < 5) {
+            highscoreList.add(user);
+        }
     }
 
     /**

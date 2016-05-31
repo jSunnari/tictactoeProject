@@ -109,7 +109,7 @@ public class NetworkCommunication implements Runnable {
                 clientController.setUserHighscore(highscoreList);
 
                 clientController.clearHighscoreList();
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < highscoreList.length; i++) {
                     clientController.addToHighscoreList(highscoreList[i]);
                 }
                 break;
