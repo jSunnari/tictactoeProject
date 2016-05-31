@@ -17,8 +17,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -92,7 +90,7 @@ public class GameBoardJavafxView extends HBox {
         exitBut.setPrefWidth(220);
 
         scoreBoardVbox.setPadding(new Insets(80));
-//        elevatorMusic.setAutoPlay(true);
+        //elevatorMusic.setAutoPlay(true);
         gameBoardHbox.getChildren().addAll(createContent(), scoreBoardVbox);
         gameBoardHbox.setPadding(new Insets(50, 0, 0, 30));
         gameBoardHbox.setAlignment(Pos.TOP_CENTER);
@@ -270,7 +268,7 @@ public class GameBoardJavafxView extends HBox {
         public void drawX() {
             imgView.setImage(crossImg);
             tieCounter = 1 + tieCounter;
-//            elevatorMusic.play();
+            //elevatorMusic.play();
             crossAudio.play();
             scaleTransition.play();
             text.setText("X");
