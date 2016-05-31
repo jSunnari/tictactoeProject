@@ -46,7 +46,7 @@ public class GameBoardJavafxView extends HBox {
     private FadeTransition fadeTransition;
     private AudioClip crossAudio = new AudioClip(GameBoardJavafxView.class.getResource("../res/plop.wav").toString());
     private AudioClip circleAudio = new AudioClip(GameBoardJavafxView.class.getResource("../res/plop.wav").toString());
-    private MediaPlayer elevatorMusic = new MediaPlayer(new Media("https://api.spotify.com/v1/tracks/1MxgpGbbzGFLUxAzt0Qqcs"));
+//    private MediaPlayer elevatorMusic = new MediaPlayer(new Media("https://api.spotify.com/v1/tracks/1MxgpGbbzGFLUxAzt0Qqcs"));
     //Scoreboard components
     private String playerX = " (X)";
     private String playerO = " (O)";
@@ -92,7 +92,7 @@ public class GameBoardJavafxView extends HBox {
         exitBut.setPrefWidth(220);
 
         scoreBoardVbox.setPadding(new Insets(80));
-        elevatorMusic.setAutoPlay(true);
+//        elevatorMusic.setAutoPlay(true);
         gameBoardHbox.getChildren().addAll(createContent(), scoreBoardVbox);
         gameBoardHbox.setPadding(new Insets(50, 0, 0, 30));
         gameBoardHbox.setAlignment(Pos.TOP_CENTER);
@@ -270,7 +270,7 @@ public class GameBoardJavafxView extends HBox {
         public void drawX() {
             imgView.setImage(crossImg);
             tieCounter = 1 + tieCounter;
-            elevatorMusic.play();
+//            elevatorMusic.play();
             crossAudio.play();
             scaleTransition.play();
             text.setText("X");
