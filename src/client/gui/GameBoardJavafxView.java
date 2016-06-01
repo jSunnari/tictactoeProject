@@ -175,11 +175,6 @@ public class GameBoardJavafxView extends HBox {
 
     public void resetBoard(){
         Platform.runLater(() -> {
-            //Clear scores:
-            p1ScoreLbl.setText("");
-            tieScoreLbl.setText("");
-            p2ScoreLbl.setText("");
-
             //Looping through our tiles in the board and reset our images and texts
             for(int i = 0; i < 3; i++ ){
                 for(int j = 0; j < 3; j++){
@@ -312,6 +307,15 @@ public class GameBoardJavafxView extends HBox {
         Platform.runLater(() ->{
             tieScore++;
             tieScoreLbl.setText(String.valueOf(tieScore));
+        });
+    }
+
+    public void resetScores(){
+        Platform.runLater(() -> {
+            //Clear scores:
+            p1ScoreLbl.setText("");
+            tieScoreLbl.setText("");
+            p2ScoreLbl.setText("");
         });
     }
 

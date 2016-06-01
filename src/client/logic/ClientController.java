@@ -339,6 +339,7 @@ public class ClientController{
             gameBoardView.setPlayerX(opponentUser.getUsername(), "*");
         }
 
+        gameBoardView.resetScores();
         elevatorMusic.stop();
         Platform.runLater(() -> mainView.setMainContent(gameBoardView));
         clickOnTile();
