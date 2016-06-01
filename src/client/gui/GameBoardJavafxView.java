@@ -313,9 +313,9 @@ public class GameBoardJavafxView extends HBox {
     public void resetScores(){
         Platform.runLater(() -> {
             //Clear scores:
-            p1ScoreLbl.setText("");
-            tieScoreLbl.setText("");
-            p2ScoreLbl.setText("");
+            p1ScoreLbl.setText(String.valueOf(0));
+            tieScoreLbl.setText(String.valueOf(0));
+            p2ScoreLbl.setText(String.valueOf(0));
         });
     }
 
