@@ -42,12 +42,14 @@ public class GameBoardJavafxView extends HBox {
     private Tile[][] board = new Tile[3][3];
     //List for possible win combinations
     private List<Combo> combos = new ArrayList<>();
-    //Game graphics
+    //Game graphics and audio
     private Image crossImg = new Image("file:src/client/res/crossWhite.png");
     private Image circleImg = new Image("file:src/client/res/circleWhite.png");
     private FadeTransition fadeTransition;
     private AudioClip crossAudio = new AudioClip(GameBoardJavafxView.class.getResource("../res/plop.wav").toString());
     private AudioClip circleAudio = new AudioClip(GameBoardJavafxView.class.getResource("../res/plop.wav").toString());
+    private AudioClip youWin = new AudioClip(GameBoardJavafxView.class.getResource("../res/youWin.wav").toString());
+    private AudioClip youLose = new AudioClip(GameBoardJavafxView.class.getResource("../res/youLose.wav").toString());
     //Scoreboard components
     private String playerX = " (X)";
     private String playerO = " (O)";
@@ -167,6 +169,7 @@ public class GameBoardJavafxView extends HBox {
         for (Combo combo : combos) {
             if (combo.isComplete()) {
                 winningPlayer = true;
+
                 playable = false;
                 playWinAnimation(combo);
                 break;
@@ -322,4 +325,7 @@ public class GameBoardJavafxView extends HBox {
         Platform.runLater(() -> playAgainLbl.setText(message));
     }
 
+    public void playWinSound() {youWin.play();}
+
+    public void playLostSound() {youLose.play();}
 }

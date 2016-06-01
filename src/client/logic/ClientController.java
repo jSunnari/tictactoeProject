@@ -530,10 +530,17 @@ public class ClientController{
 
         if (winningPlayer.getPlayer() == 1){
             gameBoardView.incPlayer1Score();
+            gameBoardView.playWinSound();
+        }else{
+            gameBoardView.playLostSound();
         }
-        else if(winningPlayer.getPlayer() == 2) {
+        if(winningPlayer.getPlayer() == 2) {
             gameBoardView.incPlayer2Score();
+            gameBoardView.playWinSound();
+        }else{
+            gameBoardView.playLostSound();
         }
+
     }
 
     /**
