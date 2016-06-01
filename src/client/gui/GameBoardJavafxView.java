@@ -22,8 +22,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -176,19 +174,21 @@ public class GameBoardJavafxView extends HBox {
     }
 
     public void resetBoard(){
-        //Clear scores:
-        p1ScoreLbl.setText("");
-        tieScoreLbl.setText("");
-        p2ScoreLbl.setText("");
+        Platform.runLater(() -> {
+            //Clear scores:
+            p1ScoreLbl.setText("");
+            tieScoreLbl.setText("");
+            p2ScoreLbl.setText("");
 
-        //Looping through our tiles in the board and reset our images and texts
-        for(int i = 0; i < 3; i++ ){
-            for(int j = 0; j < 3; j++){
-                board[j][i].imgView.setImage(null);
-                board[j][i].text.setText(null);
+            //Looping through our tiles in the board and reset our images and texts
+            for(int i = 0; i < 3; i++ ){
+                for(int j = 0; j < 3; j++){
+                    board[j][i].imgView.setImage(null);
+                    board[j][i].text.setText(null);
+                }
             }
-        }
-        playable = true;
+            playable = true;
+        });
     }
 
 
