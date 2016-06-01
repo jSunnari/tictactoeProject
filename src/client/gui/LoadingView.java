@@ -52,6 +52,7 @@ public class LoadingView extends VBox {
 
     public void cancelButtonListener(EventHandler<ActionEvent> buttonListener){
         cancelButton.setOnAction(buttonListener);
+        elevatorMusic.stop();
     }
 
     public void play() {
