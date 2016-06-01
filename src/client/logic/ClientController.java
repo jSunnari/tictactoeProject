@@ -548,17 +548,18 @@ public class ClientController{
      */
     public void setScore(User winningPlayer){
 
-        if (winningPlayer.getPlayer() == 1){
-            gameBoardView.incPlayer1Score();
+        if (currUser.getPlayer() == winningPlayer.getPlayer()){
             gameBoardView.playWinSound();
-        }else{
+        }
+        else {
             gameBoardView.playLostSound();
         }
-        if(winningPlayer.getPlayer() == 2) {
+
+        if (winningPlayer.getPlayer() == 1){
+            gameBoardView.incPlayer1Score();
+        }
+        else if(winningPlayer.getPlayer() == 2) {
             gameBoardView.incPlayer2Score();
-            gameBoardView.playWinSound();
-        }else{
-            gameBoardView.playLostSound();
         }
 
     }
