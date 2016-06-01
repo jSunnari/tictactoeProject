@@ -174,6 +174,11 @@ public class GameBoardJavafxView extends HBox {
     }
 
     public void resetBoard(){
+        //Clear scores:
+        p1ScoreLbl.setText("");
+        tieScoreLbl.setText("");
+        p2ScoreLbl.setText("");
+
         //Looping through our tiles in the board and reset our images and texts
         for(int i = 0; i < 3; i++ ){
             for(int j = 0; j < 3; j++){
@@ -196,27 +201,6 @@ public class GameBoardJavafxView extends HBox {
                 fadeTransition.setAutoReverse(true);
                 fadeTransition.play();
             }
-        });
-    }
-    //Methods that increases the score on the scoreboard
-    public void incPlayer1Score(){
-        Platform.runLater(() -> {
-            p1Score++;
-            p1ScoreLbl.setText(String.valueOf(p1Score));
-        });
-    }
-
-    public void incPlayer2Score(){
-        Platform.runLater(() ->{
-            p2Score++;
-            p2ScoreLbl.setText(String.valueOf(p2Score));
-        });
-    }
-
-    public void incTieScore(){
-        Platform.runLater(() ->{
-            tieScore++;
-            tieScoreLbl.setText(String.valueOf(tieScore));
         });
     }
 
@@ -306,6 +290,27 @@ public class GameBoardJavafxView extends HBox {
         Platform.runLater(() -> {
             p2Name = name;
             p2NameLbl.setText(p2Name + playerO + turn);
+        });
+    }
+    //Methods that increases the score on the scoreboard
+    public void incPlayer1Score(){
+        Platform.runLater(() -> {
+            p1Score++;
+            p1ScoreLbl.setText(String.valueOf(p1Score));
+        });
+    }
+
+    public void incPlayer2Score(){
+        Platform.runLater(() ->{
+            p2Score++;
+            p2ScoreLbl.setText(String.valueOf(p2Score));
+        });
+    }
+
+    public void incTieScore(){
+        Platform.runLater(() ->{
+            tieScore++;
+            tieScoreLbl.setText(String.valueOf(tieScore));
         });
     }
 
