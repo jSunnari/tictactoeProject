@@ -13,6 +13,10 @@ import client.network.NetworkConnection;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.net.URL;
 
 /**
  * Created by Jonas on 2016-05-20.
@@ -32,6 +36,8 @@ public class ClientController{
     private ObservableList<User> highscoreList = FXCollections.observableArrayList();
     private boolean opponentReqRematch = false;
     private int highScore;
+    private URL resource = getClass().getResource("../res/Elevator Music - Vanoss Gaming Background Music (HD).mp3");
+    private MediaPlayer elevatorMusic = new MediaPlayer(new Media(resource.toString()));
 
     //VIEWS:
     private MainView mainView;
@@ -311,6 +317,7 @@ public class ClientController{
     void play(){
         mainView.setMainContent(loadingView);
         loadingView.play();
+        elevatorMusic.play();
         networkCommunication.send("startGame", "");
     }
 
@@ -344,6 +351,8 @@ public class ClientController{
      * Resets game and changes view to the main menu again.
      */
     void cancelGame(){
+        elevatorMusic.stop();
+        loadingView.stop();
         networkCommunication.send("removeFromGameList", "");
         resetGame();
         currOpponent = null;
