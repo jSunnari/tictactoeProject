@@ -13,6 +13,7 @@ package client.beans;
  * tie matches = how many tie matches.
  * lost matches = how many lost maches.
  * rank = won matches gets 3 points, tie matches gets 1 points, lost matches gets 0 points.
+ * highscore = place in highscore-list.
  */
 
 import java.io.Serializable;
@@ -33,6 +34,7 @@ public class User implements Serializable {
     private int tieMatches;
     private int lostMatches;
     private int rank;
+    private int highscore;
 
     public User(String username, String password) {
         this.username = username;
@@ -43,6 +45,14 @@ public class User implements Serializable {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public int getHighScore() {
+        return highscore;
+    }
+
+    public void setHighScore(int highScore) {
+        this.highscore = highScore;
     }
 
     public boolean isLogin() {

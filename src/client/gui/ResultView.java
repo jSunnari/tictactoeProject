@@ -26,20 +26,23 @@ public class ResultView extends VBox{
     private VBox tieMatchesVbox = new VBox();
     private VBox lostMatchesVbox = new VBox();
     private VBox scoreVbox = new VBox();
+    private VBox rankVbox = new VBox();
 
     private User currentUser;
 
     private Label resultLabel = new Label("Your results");
-    private Label highScoreLabel = new Label("Top 5");
+    private Label highScoreLabel = new Label("Top 5 highscore");
     private Button backBtn = new Button("Back");
     private Label wonLabel = new Label("Won");
     private Label tieLabel = new Label("Tie");
     private Label lostLabel = new Label("Lost");
     private Label scoreLabel = new Label("Score");
+    private Label rankLabel = new Label("Rank");
     private Label wonPointsLbl = new Label();
     private Label tiePointsLbl = new Label();
     private Label lostPointsLbl = new Label();
     private Label scorePointsLbl = new Label();
+    private Label rankListLbl = new Label();
 
     public ResultView() {
         root = this;
@@ -68,6 +71,9 @@ public class ResultView extends VBox{
         scoreVbox.getChildren().addAll(scoreLabel, scorePointsLbl);
         scoreVbox.setAlignment(Pos.CENTER);
 
+        rankVbox.getChildren().addAll(rankLabel, rankListLbl);
+        rankVbox.setAlignment(Pos.CENTER);
+
         headerHbox.getChildren().add(resultLabel);
         headerHbox.setAlignment(Pos.BOTTOM_CENTER);
 
@@ -77,7 +83,8 @@ public class ResultView extends VBox{
                 wonMatchesVbox,
                 tieMatchesVbox,
                 lostMatchesVbox,
-                scoreVbox
+                scoreVbox,
+                rankVbox
         );
 
         root.getChildren().addAll(
@@ -101,11 +108,13 @@ public class ResultView extends VBox{
         lostLabel.getStyleClass().add("result-label");
         tieLabel.getStyleClass().add("result-label");
         scoreLabel.getStyleClass().add("result-label");
+        rankLabel.getStyleClass().add("result-label");
 
         wonPointsLbl.getStyleClass().add("result-label");
         lostPointsLbl.getStyleClass().add("result-label");
         tiePointsLbl.getStyleClass().add("result-label");
         scorePointsLbl.getStyleClass().add("result-label");
+        rankListLbl.getStyleClass().add("result-label");
 
     }
 
@@ -125,5 +134,6 @@ public class ResultView extends VBox{
         lostPointsLbl.setText(String.valueOf(currentUser.getLostMatches()));
         scorePointsLbl.setText(String.valueOf(currentUser.getRank()));
         resultLabel.setText("Your results, " + currentUser.getUsername());
+        rankListLbl.setText("#" + String.valueOf(currentUser.getHighScore()));
     }
 }

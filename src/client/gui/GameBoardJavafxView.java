@@ -17,8 +17,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -89,9 +87,10 @@ public class GameBoardJavafxView extends HBox {
         p2Vbox.setAlignment(Pos.TOP_CENTER);
         tieVbox.setAlignment(Pos.TOP_CENTER);
         scoreBoardVbox.setAlignment(Pos.TOP_CENTER);
+        butHbox.setAlignment(Pos.CENTER);
 
-        resetBut.setPrefWidth(230);
-        exitBut.setPrefWidth(230);
+        resetBut.setPrefWidth(220);
+        exitBut.setPrefWidth(220);
 
         scoreBoardVbox.setPadding(new Insets(80));
         gameBoardHbox.getChildren().addAll(createContent(), scoreBoardVbox);
@@ -104,7 +103,6 @@ public class GameBoardJavafxView extends HBox {
         tieVbox.getStyleClass().add("playerScoreVBoxes");
         resetBut.getStyleClass().add("form-button");
         exitBut.getStyleClass().add("form-button");
-
 
     }
     //
@@ -178,6 +176,11 @@ public class GameBoardJavafxView extends HBox {
     }
 
     public void resetBoard(){
+        //Clear scores:
+        p1ScoreLbl.setText("");
+        tieScoreLbl.setText("");
+        p2ScoreLbl.setText("");
+
         //Looping through our tiles in the board and reset our images and texts
         for(int i = 0; i < 3; i++ ){
             for(int j = 0; j < 3; j++){
@@ -200,27 +203,6 @@ public class GameBoardJavafxView extends HBox {
                 fadeTransition.setAutoReverse(true);
                 fadeTransition.play();
             }
-        });
-    }
-    //Methods that increases the score on the scoreboard
-    public void incPlayer1Score(){
-        Platform.runLater(() -> {
-            p1Score++;
-            p1ScoreLbl.setText(String.valueOf(p1Score));
-        });
-    }
-
-    public void incPlayer2Score(){
-        Platform.runLater(() ->{
-            p2Score++;
-            p2ScoreLbl.setText(String.valueOf(p2Score));
-        });
-    }
-
-    public void incTieScore(){
-        Platform.runLater(() ->{
-            tieScore++;
-            tieScoreLbl.setText(String.valueOf(tieScore));
         });
     }
 
@@ -309,6 +291,27 @@ public class GameBoardJavafxView extends HBox {
         Platform.runLater(() -> {
             p2Name = name;
             p2NameLbl.setText(p2Name + playerO + turn);
+        });
+    }
+    //Methods that increases the score on the scoreboard
+    public void incPlayer1Score(){
+        Platform.runLater(() -> {
+            p1Score++;
+            p1ScoreLbl.setText(String.valueOf(p1Score));
+        });
+    }
+
+    public void incPlayer2Score(){
+        Platform.runLater(() ->{
+            p2Score++;
+            p2ScoreLbl.setText(String.valueOf(p2Score));
+        });
+    }
+
+    public void incTieScore(){
+        Platform.runLater(() ->{
+            tieScore++;
+            tieScoreLbl.setText(String.valueOf(tieScore));
         });
     }
 

@@ -77,11 +77,27 @@ public class NetworkCommunication implements Runnable {
 
         /**
          * Depending on what command comes through the stream:
+         *
+         * login = the userobject recieved from the server with the login-boolean either true or false.
+         * userExists = if a username already exists when creating a new user.
+         * userCreated = if creating a user successfully.
+         * updateUser = get current stats for player.
+         * getHighscore = gets the current highscore-list.
+         * ********** GAME COMMANDS **********
+         * startGame = when a game is connected, gets the opponent user.
+         * drawMarker = receives markerdata, where to put a tile and if it's a X or O.
+         * setPlayer1 = sets which one of the players is player 1.
+         * setPlayer2 = sets which one of the players is player 2.
+         * resetGame = resets the game.
+         * winningPlayer = get who the winning player is.
+         * opponentStoppedGame = if the opponent quited the game.
+         * playAgain = if the opponent wants to play again.
          */
         switch (currMessage.getCommand()) {
 
             //login:
             case "login":
+                //The userobject recieved from server:
                 User loginUser = gson.fromJson(cmdData.get(0), User.class);
                 clientController.setCurrentUser(loginUser);
                 break;
@@ -98,19 +114,28 @@ public class NetworkCommunication implements Runnable {
 
             //Get current user with updated data from database:
             case "updateUser":
+                //Current user, updated:
                 User updateUser = gson.fromJson(cmdData.get(0), User.class);
+                //Update current user:
                 clientController.updateCurrUser(updateUser);
+                //Call method that it's done.
                 clientController.resultsUpdated();
                 break;
 
             //Get the highscore-list:
             case "getHighscore":
+                //Highscorelist:
                 User[] highscoreList = gson.fromJson(cmdData.get(0), User[].class);
 
+                //Check where the current player is in the highscorelist:
+                clientController.setUserHighscore(highscoreList);
+
+                //Clear the old highscorestats:
                 clientController.clearHighscoreList();
 
-                for (User highScoreUser : highscoreList){
-                    clientController.addToHighscoreList(highScoreUser);
+                //Send the current highscores:
+                for (User highscore : highscoreList) {
+                    clientController.addToHighscoreList(highscore);
                 }
                 break;
 
@@ -119,13 +144,17 @@ public class NetworkCommunication implements Runnable {
              */
             //Start a game:
             case "startGame":
+                //The opponent:
                 User opponentUser = gson.fromJson(cmdData.get(0), User.class);
+                //Call method saying an opponent has connected:
                 clientController.opponentConnected(opponentUser);
                 break;
 
             //Draw a marker - (X or O):
             case "drawMarker":
+                //Get the marker-data:
                 MarkerData markerData = gson.fromJson(cmdData.get(0), MarkerData.class);
+                //Draw the marker:
                 clientController.drawMarker(markerData);
                 break;
 
@@ -166,7 +195,7 @@ public class NetworkCommunication implements Runnable {
     /**
      * Send method,
      * Sends data to client.
-     * @param cmd = what kind of command (check api-commands.txt)
+     * @param cmd = what kind of command.
      * @param cmdData = the data (generic)
      */
     public <T> void send(String cmd, T cmdData) {

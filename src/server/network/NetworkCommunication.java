@@ -101,6 +101,20 @@ public class NetworkCommunication implements Runnable{
 
         /**
          * Depending on what command comes through the stream:
+         *
+         * login = login-method for clients.
+         * createUser = persists a user to the database.
+         * updateUser = updates a user in the database.
+         * getUpdatedUser = sends a user with the current data (highscore etc.).
+         * getHighscore = sends the highscore-list.
+         * ********** GAME COMMANDS **********
+         * startGame = when a player wants to play, set player in a que until they are two players.
+         * removeFromGameList = removes a player from the que.
+         * stopGame = sends a command to the opponent that another player has quited the game.
+         * markerData = gets info about where a marker has been set.
+         * resetGame = sends command to both players to reset the game.
+         * winningPlayer = sends command and winninplayer to both players.
+         * playAgain = sends request to opponent to play again.
          */
         switch (currMessage.getCommand()) {
 
@@ -119,7 +133,6 @@ public class NetworkCommunication implements Runnable{
                     send("login", userReference);
                     currUser = userReference;
                 }
-
                 //Else, send the same userobject which already has the login-boolean to false:
                 else {
                     send("login", loginAttempt);
@@ -128,12 +141,15 @@ public class NetworkCommunication implements Runnable{
 
             //Create a user:
             case "createUser":
+                //Get the user to create:
                 User createUserAttempt = gson.fromJson(cmdData.get(0), User.class);
 
+                //If the user don't exist, create:
                 if (serverController.getUser(createUserAttempt.getUsername()) == null) {
                     serverController.createUser(gson.fromJson(cmdData.get(0), User.class));
                     send("userCreated", "");
                 }
+                //Else, send command that user already exists:
                 else {
                     send("userExists", " ");
                 }
@@ -141,13 +157,16 @@ public class NetworkCommunication implements Runnable{
 
             //Update a user:
             case "updateUser":
+                //User to update:
                 User updateUser = gson.fromJson(cmdData.get(0), User.class);
                 serverController.updateUser(updateUser);
                 break;
 
             //Send an updated user (new data):
             case "getUpdatedUser":
+                //User to get updated data from:
                 User userToUpdate = gson.fromJson(cmdData.get(0), User.class);
+                //Send back user:
                 send("updateUser", serverController.getUser(userToUpdate.getUsername()));
 
             //Send highscore-list:
@@ -191,25 +210,31 @@ public class NetworkCommunication implements Runnable{
 
             //Reset again - (play again):
             case "resetGame":
+                //Opponent:
                 User opponent = gson.fromJson(cmdData.get(0), User.class);
+                //Send command to reset the game for opponent:
                 gameCommunication.updateClient("resetGame", opponent.getUsername());
+                //Send command to reset the game for the current player:
                 send("resetGame", "");
                 break;
 
             //The player who wins the round:
             case "winningPlayer":
+                //Opponent:
                 User opponentPlayer = gson.fromJson(cmdData.get(0), User.class);
+                //Send command and the player who won:
                 send("winningPlayer", currUser);
+                //Send command and the player who won:
                 gameCommunication.updateClient("winningPlayer", opponentPlayer.getUsername(), currUser);
                 break;
 
             //Sends request to play again:
             case "playAgain":
+                //Opponent:
                 User opponentUsr = gson.fromJson(cmdData.get(0), User.class);
+                //Send request to play again to opponent:
                 gameCommunication.updateClient("playAgain", opponentUsr.getUsername());
                 break;
-
-
         }
     }
 

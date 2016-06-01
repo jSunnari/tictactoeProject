@@ -31,6 +31,7 @@ public class ClientController{
     private int clickCounter = 0;
     private ObservableList<User> highscoreList = FXCollections.observableArrayList();
     private boolean opponentReqRematch = false;
+    private int highScore;
 
     //VIEWS:
     private MainView mainView;
@@ -73,9 +74,8 @@ public class ClientController{
         userdetailsView.createAccountBtn(event -> createAccount());
 
         //BACK - switches to the loginform again.
-        userdetailsView.backBtnListener(event -> resetValidation());
-        userdetailsView.backBtnListener(event -> mainView.setMainContent(loginView));
-        updateAccount.backBtnListener(event -> mainView.setMainContent(menuView));
+        userdetailsView.backBtnListener(event -> createUserBack());
+        updateAccount.backBtnListener(event -> userDetailBack());
 
         /**
          * MenuView, Listeners:
@@ -218,8 +218,8 @@ public class ClientController{
      * Change the view to resultView.
      */
     void updateResults(){
-        networkCommunication.send("getUpdatedUser", currUser);
         networkCommunication.send("getHighscore", "");
+        networkCommunication.send("getUpdatedUser", currUser);
     }
 
     /**
@@ -227,6 +227,7 @@ public class ClientController{
      */
     public void resultsUpdated(){
         resultView.setHighscoreList(highscoreList);
+        currUser.setHighScore(highScore);
         resultView.setCurrentUser(currUser);
         Platform.runLater(() -> mainView.setMainContent(resultView));
     }
@@ -251,7 +252,7 @@ public class ClientController{
     }
 
     void resetValidation(){
-        Platform.runLater(() -> userdetailsView.setValidationLabel("back", ""));
+        Platform.runLater(() -> userdetailsView.clearFields());
     }
 
     /**
@@ -287,6 +288,16 @@ public class ClientController{
                 updateAccount.setValidationLabel("error", "Enter all fields.");
             }
         });
+    }
+
+    void userDetailBack() {
+        mainView.setMainContent(menuView);
+        resetValidation();
+    }
+
+    void createUserBack(){
+        mainView.setMainContent(loginView);
+        resetValidation();
     }
 
     //------------------------------------------ GAME CONTROLS ---------------------------------------------------------
@@ -377,7 +388,7 @@ public class ClientController{
 
     public void opponentRequestedPlayAgain(){
         opponentReqRematch = true;
-        gameBoardView.setPlayAgainLbl(currOpponent.getUsername() + " wants to play again!");
+        gameBoardView.setPlayAgainLbl(currOpponent.getUsername() + ":\nI want to play again!");
     }
 
     /**
@@ -544,6 +555,19 @@ public class ClientController{
     }
 
     /**
+     * Set current users highscore-rank
+     * @param users = whole highscore-list
+     */
+    public void setUserHighscore(User[] users){
+        for (int i = 0; i < users.length; i++) {
+            if (users[i].getUsername().equals(currUser.getUsername())){
+                highScore = i+1;
+                break;
+            }
+        }
+    }
+
+    /**
      * Update current user:
      * @param user = updated user:
      */
@@ -563,7 +587,9 @@ public class ClientController{
      * @param user = user (including scores).
      */
     public void addToHighscoreList(User user){
-        highscoreList.add(user);
+        if (highscoreList.size() < 5) {
+            highscoreList.add(user);
+        }
     }
 
     /**
@@ -585,5 +611,4 @@ public class ClientController{
             System.exit(0);
         }
     }
-
 }

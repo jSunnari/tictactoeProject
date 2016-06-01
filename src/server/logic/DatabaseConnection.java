@@ -71,7 +71,7 @@ public class DatabaseConnection {
     }
 
     public List<User> getHighscore(){
-        return em.createNamedQuery("getHighscore").setMaxResults(5).getResultList();
+        return em.createNamedQuery("getHighscore").getResultList();
     }
 
 }
