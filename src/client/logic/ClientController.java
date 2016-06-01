@@ -322,6 +322,7 @@ public class ClientController{
         }
 
         Platform.runLater(() -> mainView.setMainContent(gameBoardView));
+        loadingView.stop();
         clickOnTile();
     }
 
