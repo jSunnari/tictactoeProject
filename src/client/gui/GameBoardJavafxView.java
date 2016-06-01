@@ -169,7 +169,6 @@ public class GameBoardJavafxView extends HBox {
         for (Combo combo : combos) {
             if (combo.isComplete()) {
                 winningPlayer = true;
-
                 playable = false;
                 playWinAnimation(combo);
                 break;
