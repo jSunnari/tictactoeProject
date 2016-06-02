@@ -330,13 +330,17 @@ public class ClientController{
 
         if (currUser.getPlayer() == 1){
             yourTurn = true;
-            gameBoardView.setPlayerX(currUser.getUsername(), "*");
-            gameBoardView.setPlayerO(opponentUser.getUsername(), "");
+            gameBoardView.setPlayerX(currUser.getUsername());
+            gameBoardView.setPlayerO(opponentUser.getUsername());
+            gameBoardView.setPlayerTurnX("Your turn");
+            gameBoardView.setPlayerTurnO("");
         }
         else if(currUser.getPlayer() == 2) {
             yourTurn = false;
-            gameBoardView.setPlayerO(currUser.getUsername(), "");
-            gameBoardView.setPlayerX(opponentUser.getUsername(), "*");
+            gameBoardView.setPlayerO(currUser.getUsername());
+            gameBoardView.setPlayerX(opponentUser.getUsername());
+            gameBoardView.setPlayerTurnO("");
+            gameBoardView.setPlayerTurnX("Your turn");
         }
 
         gameBoardView.resetScores();
@@ -520,25 +524,33 @@ public class ClientController{
             yourTurn = false;
 
             if (currUser.getPlayer() == 1){
-                gameBoardView.setPlayerX(currUser.getUsername(), "");
-                gameBoardView.setPlayerO(currOpponent.getUsername(), "*");
-
+                gameBoardView.setPlayerX(currUser.getUsername());
+                gameBoardView.setPlayerO(currOpponent.getUsername());
+                gameBoardView.setPlayerTurnX("");
+                gameBoardView.setPlayerTurnO("Your turn");
             }
             else if(currUser.getPlayer() == 2) {
-                gameBoardView.setPlayerO(currUser.getUsername(), "");
-                gameBoardView.setPlayerX(currOpponent.getUsername(), "*");
+                gameBoardView.setPlayerO(currUser.getUsername());
+                gameBoardView.setPlayerX(currOpponent.getUsername());
+                gameBoardView.setPlayerTurnO("");
+                gameBoardView.setPlayerTurnX("Your turn");
             }
         }
         else{
             yourTurn = true;
 
             if (currUser.getPlayer() == 1){
-                gameBoardView.setPlayerX(currUser.getUsername(), "*");
-                gameBoardView.setPlayerO(currOpponent.getUsername(), "");
+                gameBoardView.setPlayerX(currUser.getUsername());
+                gameBoardView.setPlayerO(currOpponent.getUsername());
+                gameBoardView.setPlayerTurnX("Your turn");
+                gameBoardView.setPlayerTurnO("");
             }
             else if(currUser.getPlayer() == 2) {
-                gameBoardView.setPlayerO(currUser.getUsername(), "*");
-                gameBoardView.setPlayerX(currOpponent.getUsername(), "");
+                gameBoardView.setPlayerO(currUser.getUsername());
+                gameBoardView.setPlayerX(currOpponent.getUsername());
+                gameBoardView.setPlayerTurnO("Your turn");
+                gameBoardView.setPlayerTurnX("");
+
             }
         }
     }

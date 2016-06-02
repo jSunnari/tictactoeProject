@@ -56,7 +56,9 @@ public class GameBoardJavafxView extends HBox {
     private int p2Score = 0;
     private int tieScore = 0;
     private Label p1NameLbl = new Label();
+    private Label p1TurnLbl = new Label();
     private Label p2NameLbl = new Label();
+    private Label p2TurnLbl = new Label();
     private Label tieNameLbl = new Label(tieName);
     private Label p1ScoreLbl = new Label("0");
     private Label p2ScoreLbl = new Label("0");
@@ -68,8 +70,8 @@ public class GameBoardJavafxView extends HBox {
     //Gameboard layouts
     private Pane gameBoard = new Pane();
     private HBox gameBoardHbox = new HBox();
-    private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
-    private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl);
+    private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl, p1TurnLbl);
+    private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl, p2TurnLbl);
     private VBox tieVbox = new VBox( tieNameLbl, tieScoreLbl);
     private VBox butHbox = new VBox(resetBut, exitBut, playAgainLbl);
     private VBox scoreBoardVbox = new VBox( p1Vbox, tieVbox, p2Vbox, butHbox);
@@ -151,6 +153,7 @@ public class GameBoardJavafxView extends HBox {
     public void resetGameListener (EventHandler<ActionEvent> buttonListener){
         resetBut.setOnAction(buttonListener);
     }
+
     public void exitGameListener (EventHandler<ActionEvent> buttonListener){
         exitBut.setOnAction(buttonListener);
     }
@@ -275,17 +278,29 @@ public class GameBoardJavafxView extends HBox {
         return playable;
     }
 
-    public void setPlayerX(String name, String turn){
+    public void setPlayerX(String name){
         Platform.runLater(() -> {
             p1Name = name;
-            p1NameLbl.setText(p1Name + playerX + turn);
+            p1NameLbl.setText(p1Name + playerX);
         });
     }
 
-    public void setPlayerO(String name, String turn){
+    public void setPlayerO(String name){
         Platform.runLater(() -> {
             p2Name = name;
-            p2NameLbl.setText(p2Name + playerO + turn);
+            p2NameLbl.setText(p2Name + playerO);
+        });
+    }
+
+    public void setPlayerTurnX(String turn){
+        Platform.runLater(() ->{
+            p1TurnLbl.setText(turn);
+        });
+    }
+
+    public void setPlayerTurnO(String turn){
+        Platform.runLater(() ->{
+            p2TurnLbl.setText(turn);
         });
     }
     //Methods that increases the score on the scoreboard
