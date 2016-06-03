@@ -56,7 +56,9 @@ public class GameBoardJavafxView extends HBox {
     private int p2Score = 0;
     private int tieScore = 0;
     private Label p1NameLbl = new Label();
+    private Label p1TurnLbl = new Label();
     private Label p2NameLbl = new Label();
+    private Label p2TurnLbl = new Label();
     private Label tieNameLbl = new Label(tieName);
     private Label p1ScoreLbl = new Label("0");
     private Label p2ScoreLbl = new Label("0");
@@ -68,8 +70,8 @@ public class GameBoardJavafxView extends HBox {
     //Gameboard layouts
     private Pane gameBoard = new Pane();
     private HBox gameBoardHbox = new HBox();
-    private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl);
-    private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl);
+    private VBox p1Vbox = new VBox(p1NameLbl, p1ScoreLbl, p1TurnLbl);
+    private VBox p2Vbox = new VBox(p2NameLbl, p2ScoreLbl, p2TurnLbl);
     private VBox tieVbox = new VBox( tieNameLbl, tieScoreLbl);
     private VBox butHbox = new VBox(resetBut, exitBut, playAgainLbl);
     private VBox scoreBoardVbox = new VBox( p1Vbox, tieVbox, p2Vbox, butHbox);
@@ -151,6 +153,7 @@ public class GameBoardJavafxView extends HBox {
     public void resetGameListener (EventHandler<ActionEvent> buttonListener){
         resetBut.setOnAction(buttonListener);
     }
+
     public void exitGameListener (EventHandler<ActionEvent> buttonListener){
         exitBut.setOnAction(buttonListener);
     }
@@ -201,72 +204,6 @@ public class GameBoardJavafxView extends HBox {
         });
     }
 
-    private class Combo {
-        private Tile[] tiles;
-        private Combo(Tile... tiles) {
-            this.tiles = tiles;
-        }
-        //If our tiles doesnt match up with our different combinations we return false, because nobody has won
-        private boolean isComplete() {
-            if (tiles[0].getValue().isEmpty())
-                return false;
-        //we return true if our combo conditions are met
-            return tiles[0].getValue().equals(tiles[1].getValue())
-                    && tiles[0].getValue().equals(tiles[2].getValue());
-        }
-    }
-
-    public class Tile extends StackPane {
-        //ImageView to hold the imported images either cross or circle
-        private ImageView imgView = new ImageView();
-        //Create a textholder to help us identify the different images
-        private Text text = new Text();
-        private int id;
-        private ScaleTransition scaleTransition;
-
-        private Tile(int id) {
-            this.id = id;
-            Rectangle tileBorder = new Rectangle(tileWidth, tileHeight);
-            tileBorder.setFill(Color.BLACK);
-            tileBorder.setStroke(Color.WHITE);
-            tileBorder.setStrokeWidth(10);
-            text.setVisible(false);
-            setAlignment(Pos.CENTER);
-            scaleTransition = new ScaleTransition(Duration.seconds(0.15), imgView);
-            scaleTransition.setByX(.01);
-            scaleTransition.setByY(.01);
-            scaleTransition.setToX(1.1);
-            scaleTransition.setToY(1.1);
-            scaleTransition.setCycleCount(2);
-            scaleTransition.setAutoReverse(true);
-            getChildren().addAll(tileBorder, imgView);
-        }
-
-        public String getValue() {
-            return text.getText();
-        }
-
-        public void drawX() {
-            imgView.setImage(crossImg);
-            tieCounter = 1 + tieCounter;
-            crossAudio.play();
-            scaleTransition.play();
-            text.setText("X");
-        }
-
-        public void drawO() {
-            imgView.setImage(circleImg);
-            tieCounter = 1 + tieCounter;
-            circleAudio.play();
-            scaleTransition.play();
-            text.setText("O");
-        }
-
-        public int getTileId(){
-            return id;
-        }
-    }
-
     public Tile[][] getBoard(){
         return board;
     }
@@ -275,17 +212,29 @@ public class GameBoardJavafxView extends HBox {
         return playable;
     }
 
-    public void setPlayerX(String name, String turn){
+    public void setPlayerX(String name){
         Platform.runLater(() -> {
             p1Name = name;
-            p1NameLbl.setText(p1Name + playerX + turn);
+            p1NameLbl.setText(p1Name + playerX);
         });
     }
 
-    public void setPlayerO(String name, String turn){
+    public void setPlayerO(String name){
         Platform.runLater(() -> {
             p2Name = name;
-            p2NameLbl.setText(p2Name + playerO + turn);
+            p2NameLbl.setText(p2Name + playerO);
+        });
+    }
+
+    public void setPlayerTurnX(String turn){
+        Platform.runLater(() ->{
+            p1TurnLbl.setText(turn);
+        });
+    }
+
+    public void setPlayerTurnO(String turn){
+        Platform.runLater(() ->{
+            p2TurnLbl.setText(turn);
         });
     }
     //Methods that increases the score on the scoreboard

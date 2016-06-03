@@ -30,7 +30,7 @@ public class ClientController{
     //GAME VARIABLES:
     private User currUser;
     private User currOpponent;
-    private GameBoardJavafxView.Tile[][] board;
+    private Tile[][] board;
     private boolean yourTurn = false;
     private int clickCounter = 0;
     private ObservableList<User> highscoreList = FXCollections.observableArrayList();
@@ -331,13 +331,17 @@ public class ClientController{
 
         if (currUser.getPlayer() == 1){
             yourTurn = true;
-            gameBoardView.setPlayerX(currUser.getUsername(), "*");
-            gameBoardView.setPlayerO(opponentUser.getUsername(), "");
+            gameBoardView.setPlayerX(currUser.getUsername());
+            gameBoardView.setPlayerO(opponentUser.getUsername());
+            gameBoardView.setPlayerTurnX("Your turn");
+            gameBoardView.setPlayerTurnO("");
         }
         else if(currUser.getPlayer() == 2) {
             yourTurn = false;
-            gameBoardView.setPlayerO(currUser.getUsername(), "");
-            gameBoardView.setPlayerX(opponentUser.getUsername(), "*");
+            gameBoardView.setPlayerO(currUser.getUsername());
+            gameBoardView.setPlayerX(opponentUser.getUsername());
+            gameBoardView.setPlayerTurnO("");
+            gameBoardView.setPlayerTurnX("Your turn");
         }
 
         gameBoardView.resetScores();
@@ -429,7 +433,7 @@ public class ClientController{
         //Looping through our tiles in the board
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                GameBoardJavafxView.Tile currentTile = board[j][i];
+                Tile currentTile = board[j][i];
                 currentTile.setOnMouseClicked(event -> {
                     if (gameBoardView.isPlayable()) {
 
@@ -448,7 +452,7 @@ public class ClientController{
      *
      * @param currentTile = the tile the player clicked on.
      */
-    void sendMarkerData(GameBoardJavafxView.Tile currentTile){
+    void sendMarkerData(Tile currentTile){
         MarkerData markerData = new MarkerData(currentTile.getTileId(), currOpponent.getUsername());
         if (currUser.getPlayer() == 1){
             markerData.setMarkerType("X");
@@ -522,25 +526,33 @@ public class ClientController{
             yourTurn = false;
 
             if (currUser.getPlayer() == 1){
-                gameBoardView.setPlayerX(currUser.getUsername(), "");
-                gameBoardView.setPlayerO(currOpponent.getUsername(), "*");
-
+                gameBoardView.setPlayerX(currUser.getUsername());
+                gameBoardView.setPlayerO(currOpponent.getUsername());
+                gameBoardView.setPlayerTurnX("");
+                gameBoardView.setPlayerTurnO("Your turn");
             }
             else if(currUser.getPlayer() == 2) {
-                gameBoardView.setPlayerO(currUser.getUsername(), "");
-                gameBoardView.setPlayerX(currOpponent.getUsername(), "*");
+                gameBoardView.setPlayerO(currUser.getUsername());
+                gameBoardView.setPlayerX(currOpponent.getUsername());
+                gameBoardView.setPlayerTurnO("");
+                gameBoardView.setPlayerTurnX("Your turn");
             }
         }
         else{
             yourTurn = true;
 
             if (currUser.getPlayer() == 1){
-                gameBoardView.setPlayerX(currUser.getUsername(), "*");
-                gameBoardView.setPlayerO(currOpponent.getUsername(), "");
+                gameBoardView.setPlayerX(currUser.getUsername());
+                gameBoardView.setPlayerO(currOpponent.getUsername());
+                gameBoardView.setPlayerTurnX("Your turn");
+                gameBoardView.setPlayerTurnO("");
             }
             else if(currUser.getPlayer() == 2) {
-                gameBoardView.setPlayerO(currUser.getUsername(), "*");
-                gameBoardView.setPlayerX(currOpponent.getUsername(), "");
+                gameBoardView.setPlayerO(currUser.getUsername());
+                gameBoardView.setPlayerX(currOpponent.getUsername());
+                gameBoardView.setPlayerTurnO("Your turn");
+                gameBoardView.setPlayerTurnX("");
+
             }
         }
     }
