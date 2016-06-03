@@ -71,14 +71,12 @@ public class NetworkCommunication implements Runnable{
                 while (input.hasNext()) {
                     incommingMessage = input.nextLine();
 
-                    //If it is a disconnect-message, disconnect:
                     if (incommingMessage.equals("disconnect")){
                         System.out.println("disconnecting client " + socket.getInetAddress());
                         disconnect();
                         break;
                     }
-                    //else, send it to the parse-method:
-                    else{
+                    else {
                         parse(incommingMessage);
                     }
                 }
@@ -118,6 +116,13 @@ public class NetworkCommunication implements Runnable{
          */
         switch (currMessage.getCommand()) {
 
+            //Disconnect:
+            case "disconnectOpponent":
+                User disconnectedOpponent = gson.fromJson(cmdData.get(0), User.class);
+                if (disconnectedOpponent != null){
+                    gameCommunication.updateClient("opponentStoppedGame", disconnectedOpponent.getUsername());
+                }
+                break;
             //Login:
             case "login":
                 //Get the userobject from the client containing only a username and password,
@@ -262,9 +267,9 @@ public class NetworkCommunication implements Runnable{
         clientConnected = false;
         gameCommunication.removePlayer(currUser);
         try {
-            input.close();
             output.close();
             socket.close();
+            input.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

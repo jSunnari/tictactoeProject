@@ -210,7 +210,7 @@ public class NetworkCommunication implements Runnable {
      * Closes the stream there after and if exit-boolean is true, the application closes too.
      */
     public void disconnect(boolean exit) {
-        output.println("disconnect");
+        output.write("disconnect");
         output.flush();
         output.close();
 

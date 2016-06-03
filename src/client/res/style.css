@@ -31,6 +31,10 @@ gameboard-pane{
     -fx-padding: 0;
 }
 
+.info-label {
+    -fx-text-fill: red;
+}
+
 .result-label {
     -fx-font-family: 'VT323';
     -fx-font-size: 36px;

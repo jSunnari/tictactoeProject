@@ -251,6 +251,7 @@ public class ClientController{
         if (!userdetailsView.checkFields()){
             User user = new User(username,password,email);
             networkCommunication.send("createUser", user);
+            mainView.setMainContent(loginView);
         }
         else{
             Platform.runLater(() -> userdetailsView.setValidationLabel("error", "Enter all fields."));
@@ -383,6 +384,7 @@ public class ClientController{
         resetGame();
         currOpponent = null;
         Platform.runLater(() -> mainView.setMainContent(menuView));
+        menuView.setInfoLabel("Opponent has left the game");
     }
 
     void requestPlayAgain(){
@@ -616,6 +618,7 @@ public class ClientController{
      */
     public void disconnect(boolean exit) {
         if (connectedToServer) {
+            networkCommunication.send("disconnectOpponent", currOpponent);
             networkConnection.disconnect(exit);
         }
         else {

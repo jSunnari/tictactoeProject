@@ -58,4 +58,8 @@ public class ServerController {
         return dbc.getHighscore();
     }
 
+    public void disconnect(){
+        dbc.closeDB();
+    }
+
 }
