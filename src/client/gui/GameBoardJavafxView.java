@@ -219,56 +219,56 @@ public class GameBoardJavafxView extends HBox {
         }
     }
 
-    public class Tile extends StackPane {
-        //ImageView to hold the imported images either cross or circle
-        private ImageView imgView = new ImageView();
-        //Create a textholder to help us identify the different images
-        private Text text = new Text();
-        private int id;
-        private ScaleTransition scaleTransition;
-
-        private Tile(int id) {
-            this.id = id;
-            Rectangle tileBorder = new Rectangle(tileWidth, tileHeight);
-            tileBorder.setFill(Color.BLACK);
-            tileBorder.setStroke(Color.WHITE);
-            tileBorder.setStrokeWidth(10);
-            text.setVisible(false);
-            setAlignment(Pos.CENTER);
-            scaleTransition = new ScaleTransition(Duration.seconds(0.15), imgView);
-            scaleTransition.setByX(.01);
-            scaleTransition.setByY(.01);
-            scaleTransition.setToX(1.1);
-            scaleTransition.setToY(1.1);
-            scaleTransition.setCycleCount(2);
-            scaleTransition.setAutoReverse(true);
-            getChildren().addAll(tileBorder, imgView);
-        }
-
-        public String getValue() {
-            return text.getText();
-        }
-
-        public void drawX() {
-            imgView.setImage(crossImg);
-            tieCounter = 1 + tieCounter;
-            crossAudio.play();
-            scaleTransition.play();
-            text.setText("X");
-        }
-
-        public void drawO() {
-            imgView.setImage(circleImg);
-            tieCounter = 1 + tieCounter;
-            circleAudio.play();
-            scaleTransition.play();
-            text.setText("O");
-        }
-
-        public int getTileId(){
-            return id;
-        }
-    }
+//    public class Tile extends StackPane {
+//        //ImageView to hold the imported images either cross or circle
+//        private ImageView imgView = new ImageView();
+//        //Create a textholder to help us identify the different images
+//        private Text text = new Text();
+//        private int id;
+//        private ScaleTransition scaleTransition;
+//
+//        private Tile(int id) {
+//            this.id = id;
+//            Rectangle tileBorder = new Rectangle(tileWidth, tileHeight);
+//            tileBorder.setFill(Color.BLACK);
+//            tileBorder.setStroke(Color.WHITE);
+//            tileBorder.setStrokeWidth(10);
+//            text.setVisible(false);
+//            setAlignment(Pos.CENTER);
+//            scaleTransition = new ScaleTransition(Duration.seconds(0.15), imgView);
+//            scaleTransition.setByX(.01);
+//            scaleTransition.setByY(.01);
+//            scaleTransition.setToX(1.1);
+//            scaleTransition.setToY(1.1);
+//            scaleTransition.setCycleCount(2);
+//            scaleTransition.setAutoReverse(true);
+//            getChildren().addAll(tileBorder, imgView);
+//        }
+//
+//        public String getValue() {
+//            return text.getText();
+//        }
+//
+//        public void drawX() {
+//            imgView.setImage(crossImg);
+//            tieCounter = 1 + tieCounter;
+//            crossAudio.play();
+//            scaleTransition.play();
+//            text.setText("X");
+//        }
+//
+//        public void drawO() {
+//            imgView.setImage(circleImg);
+//            tieCounter = 1 + tieCounter;
+//            circleAudio.play();
+//            scaleTransition.play();
+//            text.setText("O");
+//        }
+//
+//        public int getTileId(){
+//            return id;
+//        }
+//    }
 
     public Tile[][] getBoard(){
         return board;

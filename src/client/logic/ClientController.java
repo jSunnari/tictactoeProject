@@ -30,7 +30,7 @@ public class ClientController{
     //GAME VARIABLES:
     private User currUser;
     private User currOpponent;
-    private GameBoardJavafxView.Tile[][] board;
+    private Tile[][] board;
     private boolean yourTurn = false;
     private int clickCounter = 0;
     private ObservableList<User> highscoreList = FXCollections.observableArrayList();
@@ -431,7 +431,7 @@ public class ClientController{
         //Looping through our tiles in the board
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                GameBoardJavafxView.Tile currentTile = board[j][i];
+                Tile currentTile = board[j][i];
                 currentTile.setOnMouseClicked(event -> {
                     if (gameBoardView.isPlayable()) {
 
@@ -450,7 +450,7 @@ public class ClientController{
      *
      * @param currentTile = the tile the player clicked on.
      */
-    void sendMarkerData(GameBoardJavafxView.Tile currentTile){
+    void sendMarkerData(Tile currentTile){
         MarkerData markerData = new MarkerData(currentTile.getTileId(), currOpponent.getUsername());
         if (currUser.getPlayer() == 1){
             markerData.setMarkerType("X");
