@@ -28,7 +28,9 @@ public class DatabaseConnection {
      */
     public void closeDB() {
         emf.close();
-        em.close();
+        if (em.isOpen()) {
+            em.close();
+        }
     }
 
     /**
