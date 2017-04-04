@@ -9,5 +9,5 @@ Multiplayer tictactoe-game with player-accounts and statistic (Server - Client).
 <li>JSON(gson)</li>
 </ul>
 
-![screenshot](https://dl.dropboxusercontent.com/u/6055409/tictactoe1.png)
-![screenshot](https://dl.dropboxusercontent.com/u/6055409/tictactoe2.png)
+![screenshot](https://cloud.githubusercontent.com/assets/15261370/24668747/3fcd2158-1968-11e7-80a3-fd1456313d81.png)
+![screenshot](https://cloud.githubusercontent.com/assets/15261370/24668748/3fd18658-1968-11e7-9e20-ca572d2ab8a7.png)
